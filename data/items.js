@@ -43,8 +43,24 @@ const itemsData = [
 
   // ── 礦石 ────────────────────────────────────────────────
   {
-    name: '鐵',
+    name: '石頭',
     icon: '🪨',
+    category: '礦石',
+    effect: '',
+    source: ['採礦取得'],
+    note: '2 石頭可加工出 1 洗過的石頭',
+  },
+  {
+    name: '洗過的石頭',
+    icon: '🧱',
+    category: '礦石',
+    effect: '',
+    source: ['2 石頭加工獲得'],
+    note: '精煉後可獲得鐵、銅、黃金、鑽石',
+  },
+  {
+    name: '鐵',
+    icon: '⬜',
     category: '礦石',
     effect: '',
     source: ['將洗過的石頭精煉獲得'],
