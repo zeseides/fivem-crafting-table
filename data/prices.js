@@ -10,6 +10,11 @@ const priceItems = [
   { name: '黃金',     icon: '🟡', category: '礦石', sellPrice: 200  },
   { name: '鑽石',     icon: '💎', category: '礦石', sellPrice: 1500 },
 
+  // 漁獲
+  { name: '魚',       icon: '🐟', category: '漁獲', sellPrice: 10  },
+  { name: '金魚',     icon: '🐠', category: '漁獲', sellPrice: 50  },
+  { name: '鯊魚',     icon: '🦈', category: '漁獲', sellPrice: 200 },
+
   // 食物
   { name: '橘子',     icon: '🍊', category: '食物', sellPrice: 300 },
   { name: '橘子汁',   icon: '🧃', category: '食物', sellPrice: 500 },
