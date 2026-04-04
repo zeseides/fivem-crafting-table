@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合成表查詢</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Rajdhani:wght@600;700&display=swap');
+  :root {
+    --bg: #0a0d14; --surface: #111827; --card: #151d2e; --card-hover: #1a2540;
+    --border: #1e3a5f; --accent: #2563eb; --accent-light: #60a5fa;
+    --text: #e2e8f0; --text-dim: #94a3b8; --green: #10b981; --yellow: #f59e0b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+  .wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+  header { margin-bottom: 36px; display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .header-title { font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(135deg, #fff 30%, var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .header-sub { color: var(--text-dim); font-size: 0.85rem; padding-bottom: 4px; }
+  .controls { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+  .search-wrap { flex: 1; min-width: 200px; position: relative; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); width: 16px; height: 16px; }
+  input[type="search"] { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 14px 10px 38px; border-radius: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; outline: none; transition: border-color .2s; }
+  input[type="search"]:focus { border-color: var(--accent); }
+  input[type="search"]::placeholder { color: var(--text-dim); }
+  .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tab { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-dim); font-size: 0.82rem; cursor: pointer; transition: all .2s; white-space: nowrap; font-family: 'Noto Sans TC', sans-serif; }
+  .tab:hover { border-color: var(--accent); color: var(--text); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .stats { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 20px; }
+  .stats span { color: var(--accent-light); font-weight: 700; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: all .25s; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; transition: opacity .3s; }
+  .card:hover { background: var(--card-hover); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.18); }
+  .card:hover::before { opacity: 1; }
+  .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .item-icon { width: 48px; height: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+  .item-info { flex: 1; }
+  .item-name { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .badges { display: flex; gap: 5px; flex-wrap: wrap; }
+  .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.04em; }
+  .badge-time { background: var(--accent); color: #fff; }
+  .badge-lvl { background: #1e3a5f; color: var(--accent-light); border: 1px solid var(--border); }
+  .badge-qty { background: #1a2e1a; color: var(--green); border: 1px solid #14532d; }
+  .badge-station { background: #2d1f00; color: var(--yellow); border: 1px solid #78350f; font-size: 0.65rem; }
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .materials-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: 'Rajdhani', sans-serif; }
+  .materials { display: flex; flex-direction: column; gap: 5px; }
+  .mat-row { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+  .mat-qty { font-family: 'Rajdhani', sans-serif; font-weight: 700; color: var(--accent-light); font-size: 0.9rem; min-width: 32px; }
+  .mat-icon { font-size: 1rem; }
+  .mat-name { color: var(--text-dim); }
+  .no-results { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--text-dim); }
+  .no-results .icon { font-size: 3rem; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <header>
+    <div><div class="header-title">⚙ 合成表查詢</div></div>
+    <div class="header-sub">快速瀏覽所有可合成物品與所需材料</div>
+  </header>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="搜尋物品或材料..." oninput="renderCards()">
+    </div>
+    <div class="filter-tabs" id="filterTabs"></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const items = [
+  { name: '小刀', icon: '🔪', time: '00:30', level: 0, qty: 1, station: '一般合成台', category: '武器', materials: [{ qty: 20, icon: '🪨', name: '鐵' }, { qty: 20, icon: '🪵', name: '木頭' }] },
+  { name: '劣質防彈衣', icon: '🦺', time: '00:10', level: 0, qty: 1, station: '一般合成台', category: '防具', materials: [{ qty: 10, icon: '🪨', name: '鐵' }, { qty: 20, icon: '🟤', name: '普通皮革' }, { qty: 10, icon: '🫧', name: '動物脂肪' }] },
+  { name: '偷尼錢錢', icon: '👹', time: '00:10', level: 0, qty: 1, station: '一般合成台', category: '其他', materials: [{ qty: 5, icon: '🪙', name: '偷尼碎片' }] },
+  { name: '氧氣瓶', icon: '🧴', time: '00:10', level: 0, qty: 1, station: '一般合成台', category: '道具', materials: [{ qty: 36, icon: '🛢️', name: '精煉油' }, { qty: 24, icon: '🐟', name: '魚' }, { qty: 40, icon: '🪨', name: '鐵' }, { qty: 1, icon: '📋', name: '製作圖' }, { qty: 5, icon: '🐢', name: '海龜' }] },
+  { name: '麵包', icon: '🥖', time: '00:10', level: 0, qty: 1, station: '一般合成台', category: '食物', materials: [{ qty: 10, icon: '🟤', name: '普通皮革' }, { qty: 50, icon: '🍗', name: '包裝雞肉' }] },
+  { name: '水', icon: '🍶', time: '00:10', level: 0, qty: 1, station: '一般合成台', category: '食物', materials: [{ qty: 50, icon: '🫙', name: '空瓶子' }] },
+  { name: '修車工具', icon: '🔧', time: '00:10', level: 0, qty: 1, station: '公職合成台', category: '公職', materials: [{ qty: 5, icon: '⚙️', name: '修復好的引擎' }, { qty: 5, icon: '🪨', name: '洗過的石頭' }, { qty: 5, icon: '🔄', name: '修復好的輪胎' }] },
+];
+const categories = ['全部', ...new Set(items.map(i => i.category))];
+let activeCategory = '全部';
+function renderTabs() {
+  document.getElementById('filterTabs').innerHTML = categories.map(c =>
+    `<button class="tab ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+  ).join('');
+}
+function setCategory(c) { activeCategory = c; renderTabs(); renderCards(); }
+function renderCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let list = items;
+  if (activeCategory !== '全部') list = list.filter(i => i.category === activeCategory);
+  if (q) list = list.filter(i => i.name.includes(q) || i.materials.some(m => m.name.includes(q)) || i.station.includes(q));
+  document.getElementById('stats').innerHTML = `顯示 <span>${list.length}</span> / ${items.length} 筆合成配方`;
+  const grid = document.getElementById('grid');
+  if (!list.length) { grid.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的配方</p></div>`; return; }
+  grid.innerHTML = list.map(item => `
+    <div class="card">
+      <div class="card-header">
+        <div class="item-icon">${item.icon}</div>
+        <div class="item-info">
+          <div class="item-name">${item.name}</div>
+          <div class="badges">
+            <span class="badge badge-time">⏱ ${item.time}</span>
+            <span class="badge badge-lvl">LV ${item.level}</span>
+            <span class="badge badge-qty">×${item.qty}</span>
+            <span class="badge ${item.station === '公職合成台' ? 'badge-station' : 'badge-lvl'}">${item.station}</span>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="materials-label">所需材料</div>
+      <div class="materials">
+        ${item.materials.map(m => `<div class="mat-row"><span class="mat-qty">${m.qty}×</span><span class="mat-icon">${m.icon}</span><span class="mat-name">${m.name}</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+renderTabs(); renderCards();
+</script>
+</body>
+</html>
