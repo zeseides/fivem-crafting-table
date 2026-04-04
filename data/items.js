@@ -48,6 +48,14 @@ const itemsData = [
     source: ['從垃圾桶拾取'],
     note: '',
   },
+  {
+    name: '羊毛',
+    icon: '🐑',
+    category: '原料',
+    effect: '',
+    source: ['到羊毛採集點採集取得'],
+    note: '',
+  },
 
   // ── 木材 ────────────────────────────────────────────────
   {
@@ -114,6 +122,32 @@ const itemsData = [
     category: '礦石',
     effect: '',
     source: ['將洗過的石頭精煉獲得'],
+    note: '',
+  },
+
+  // ── 漁獲 ────────────────────────────────────────────────
+  {
+    name: '魚',
+    icon: '🐟',
+    category: '漁獲',
+    effect: '',
+    source: ['在釣魚掛機區釣魚取得'],
+    note: '',
+  },
+  {
+    name: '鯊魚',
+    icon: '🦈',
+    category: '漁獲',
+    effect: '',
+    source: ['在釣魚掛機區釣魚取得'],
+    note: '',
+  },
+  {
+    name: '金魚',
+    icon: '🐠',
+    category: '漁獲',
+    effect: '',
+    source: ['在釣魚掛機區釣魚取得'],
     note: '',
   },
 
