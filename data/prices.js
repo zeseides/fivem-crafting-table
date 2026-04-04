@@ -2,9 +2,10 @@
 // NPC 收購價格資料
 // 新增物品請照以下格式加入 priceItems 陣列
 // sellPrice: NPC 收購價格（單位：$）
-// 若有多個 NPC 收購同一物品可加入 buyers 陣列
 // ============================================================
 const priceItems = [
-  // 範例格式（之後填入實際資料）
-  // { name: '鐵', icon: '🪨', category: '原料', sellPrice: 10, buyers: [{ npc: 'NPC名稱', price: 10 }] },
+  // 食物
+  { name: '高麗菜乾', icon: '🥬', category: '食物', sellPrice: 600 },
+  { name: '鳳梨汁',   icon: '🍍', category: '食物', sellPrice: 620 },
+  { name: '南瓜汁',   icon: '🎃', category: '食物', sellPrice: 700 },
 ];
