@@ -5,6 +5,7 @@
 const PAGES = {
   crafting: '合成表',
   prices:   'NPC收購價',
+  items:    '物品圖鑑',
   upgrades: '物品升級',
 };
 
@@ -41,6 +42,7 @@ function renderPage() {
   $('controls').innerHTML = '';
   if (currentPage === 'crafting') renderCrafting();
   else if (currentPage === 'prices') renderPrices();
+  else if (currentPage === 'items') renderItems();
   else if (currentPage === 'upgrades') renderUpgrades();
 }
 
@@ -102,9 +104,7 @@ function setCat(c) { activeCat = c; renderCatTabs(); renderCraftingCards(); }
 
 function craftCardHtml(item) {
   const isJob = item.stationType === 'job';
-  const descHtml = item.desc
-    ? `<div class="item-desc">${item.desc}</div>`
-    : '';
+  const descHtml = item.desc ? `<div class="item-desc">${item.desc}</div>` : '';
   return `
     <div class="card ${isJob ? 'job-card' : ''}">
       <div class="card-header">
@@ -200,15 +200,18 @@ function renderPriceCards() {
     return;
   }
 
+  // 按價格由低到高排序
+  const sorted = [...list].sort((a, b) => a.sellPrice - b.sellPrice);
+
   $('pageContent').innerHTML = `
-    <div class="stats">顯示 <span>${list.length}</span> / ${priceItems.length} 筆價格資料</div>
+    <div class="stats">顯示 <span>${sorted.length}</span> / ${priceItems.length} 筆價格資料</div>
     <div class="price-table">
       <div class="price-header-row">
         <span>物品</span>
         <span>類型</span>
         <span>NPC 收購價</span>
       </div>
-      ${list.map(i => `
+      ${sorted.map(i => `
         <div class="price-row">
           <span class="price-item-name">${i.icon} ${i.name}</span>
           <span class="price-cat">${i.category}</span>
@@ -216,6 +219,90 @@ function renderPriceCards() {
         </div>
       `).join('')}
     </div>
+  `;
+}
+
+// ============================================================
+// 物品圖鑑頁面
+// ============================================================
+let activeItemCat = '全部';
+
+function renderItems() {
+  $('controls').innerHTML = `
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="搜尋物品..." oninput="renderItemCards()">
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">類型</span>
+      <div class="tabs" id="itemCatTabs"></div>
+    </div>
+  `;
+  activeItemCat = '全部';
+  renderItemCatTabs();
+  renderItemCards();
+}
+
+function renderItemCatTabs() {
+  const cats = ['全部', ...new Set(itemsData.map(i => i.category))];
+  $('itemCatTabs').innerHTML = cats.map(c =>
+    `<button class="tab ${activeItemCat === c ? 'active-cat' : ''}" onclick="setItemCat('${c}')">${c}</button>`
+  ).join('');
+}
+
+function setItemCat(c) { activeItemCat = c; renderItemCatTabs(); renderItemCards(); }
+
+function renderItemCards() {
+  const q = ($('searchInput') || {}).value || '';
+  let list = itemsData;
+  if (activeItemCat !== '全部') list = list.filter(i => i.category === activeItemCat);
+  if (q) list = list.filter(i => i.name.includes(q) || i.source.some(s => s.includes(q)));
+
+  if (!list.length) {
+    $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
+    return;
+  }
+
+  // 按類型分群
+  const groups = {};
+  list.forEach(i => {
+    if (!groups[i.category]) groups[i.category] = [];
+    groups[i.category].push(i);
+  });
+
+  $('pageContent').innerHTML = `
+    <div class="stats">顯示 <span>${list.length}</span> / ${itemsData.length} 筆物品資料</div>
+    ${Object.entries(groups).map(([cat, items]) => `
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">📦</span>
+          <span class="section-title general">${cat}</span>
+          <span class="section-count">${items.length} 筆</span>
+        </div>
+        <div class="grid">
+          ${items.map(item => `
+            <div class="card">
+              <div class="card-header">
+                <div class="item-icon">${item.icon}</div>
+                <div class="item-info">
+                  <div class="item-name">${item.name}</div>
+                  <div class="badges">
+                    <span class="badge badge-cat">${item.category}</span>
+                  </div>
+                  ${item.effect ? `<div class="item-desc">✨ ${item.effect}</div>` : ''}
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="materials-label">獲取方式</div>
+              <div class="materials">
+                ${item.source.map(s => `<div class="mat-row"><span class="mat-icon">▸</span><span class="mat-name">${s}</span></div>`).join('')}
+              </div>
+              ${item.note ? `<div class="item-note">💡 ${item.note}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
   `;
 }
 

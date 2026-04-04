@@ -22,7 +22,7 @@
   .header-title { font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(135deg, #fff 30%, var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 6px; }
   .header-sub { color: var(--text-dim); font-size: 0.85rem; }
 
-  .nav { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .nav { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; flex-wrap: wrap; }
   .nav-tab { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); font-size: 0.9rem; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; transition: all .2s; margin-bottom: -1px; white-space: nowrap; }
   .nav-tab:hover { color: var(--text); }
   .nav-tab.active { color: var(--accent-light); border-bottom-color: var(--accent-light); font-weight: 700; }
@@ -72,6 +72,7 @@
   .badge-qty { background: #1a2e1a; color: var(--green); border: 1px solid #14532d; }
   .badge-cat { background: #1e2a3a; color: var(--text-dim); border: 1px solid var(--border); font-size: 0.65rem; }
   .item-desc { font-size: 0.78rem; color: var(--yellow); margin-top: 5px; line-height: 1.4; }
+  .item-note { font-size: 0.78rem; color: var(--accent-light); margin-top: 10px; padding: 6px 10px; background: rgba(37,99,235,0.08); border-radius: 6px; border-left: 2px solid var(--accent); }
   .divider { height: 1px; background: var(--border); margin: 12px 0; }
   .materials-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: 'Rajdhani', sans-serif; }
   .materials { display: flex; flex-direction: column; gap: 5px; }
@@ -99,7 +100,7 @@
   <header>
     <div class="server-label">⚔ 碎夢邊境 FiveM Server</div>
     <div class="header-title">遊戲資訊查詢</div>
-    <div class="header-sub">合成表 · NPC收購價格 · 物品升級</div>
+    <div class="header-sub">合成表 · NPC收購價格 · 物品圖鑑 · 物品升級</div>
   </header>
 
   <nav class="nav" id="navTabs"></nav>
@@ -111,6 +112,7 @@
 
 <script src="data/crafting.js"></script>
 <script src="data/prices.js"></script>
+<script src="data/items.js"></script>
 <script src="data/upgrades.js"></script>
 <script src="app.js"></script>
 </body>
