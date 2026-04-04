@@ -5,6 +5,8 @@
 // ============================================================
 const priceItems = [
   // 食物
+  { name: '橘子',     icon: '🍊', category: '食物', sellPrice: 300 },
+  { name: '橘子汁',   icon: '🧃', category: '食物', sellPrice: 500 },
   { name: '高麗菜乾', icon: '🥬', category: '食物', sellPrice: 600 },
   { name: '鳳梨汁',   icon: '🍍', category: '食物', sellPrice: 620 },
   { name: '南瓜汁',   icon: '🎃', category: '食物', sellPrice: 700 },
