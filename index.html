@@ -9,8 +9,8 @@
   :root {
     --bg: #0a0d14; --surface: #111827; --card: #151d2e; --card-hover: #1a2540;
     --border: #1e3a5f; --accent: #2563eb; --accent-light: #60a5fa;
-    --text: #e2e8f0; --text-dim: #94a3b8; --green: #10b981; --yellow: #f59e0b; --purple: #a78bfa;
-    --orange: #f97316;
+    --text: #e2e8f0; --text-dim: #94a3b8; --green: #10b981; --yellow: #f59e0b;
+    --purple: #a78bfa; --orange: #f97316;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; overflow-x: hidden; }
@@ -62,7 +62,6 @@
   .card.job-card:hover { border-color: var(--purple); box-shadow: 0 8px 32px rgba(124,58,237,0.18); }
   .card:hover::before { opacity: 1; }
 
-  /* 高亮閃爍效果 */
   @keyframes highlightPulse {
     0%   { border-color: var(--yellow); box-shadow: 0 0 0 0 rgba(245,158,11,0.6); }
     50%  { border-color: var(--yellow); box-shadow: 0 0 20px 6px rgba(245,158,11,0.3); }
@@ -91,9 +90,40 @@
   .mat-icon { font-size: 1rem; }
   .mat-name { color: var(--text-dim); line-height: 1.6; }
 
-  /* 物品超連結 */
+  /* 材料名稱可點擊 */
+  .mat-link {
+    color: var(--text);
+    cursor: pointer;
+    border-bottom: 1px dashed var(--accent-light);
+    transition: color .15s, border-color .15s;
+  }
+  .mat-link:hover { color: var(--accent-light); border-bottom-color: var(--accent-light); }
+
+  /* 圖鑑小卡 Popup */
+  #itemPopup {
+    display: none;
+    position: absolute;
+    z-index: 999;
+    width: 260px;
+    background: #1a2540;
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(96,165,250,0.15);
+    pointer-events: auto;
+  }
+  .popup-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .popup-icon { font-size: 1.6rem; width: 40px; height: 40px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .popup-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .popup-effect { font-size: 0.75rem; color: var(--yellow); margin-bottom: 8px; }
+  .popup-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .popup-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; font-family: 'Rajdhani', sans-serif; }
+  .popup-source { font-size: 0.8rem; color: var(--text-dim); line-height: 1.6; }
+  .popup-note { font-size: 0.75rem; color: var(--accent-light); margin-top: 8px; padding: 5px 8px; background: rgba(37,99,235,0.08); border-radius: 5px; border-left: 2px solid var(--accent); line-height: 1.5; }
+
+  /* 物品超連結（圖鑑內部） */
   .item-link { color: var(--accent-light); text-decoration: underline dotted; text-underline-offset: 2px; cursor: pointer; transition: color .15s; }
-  .item-link:hover { color: #fff; text-decoration: underline; }
+  .item-link:hover { color: #fff; }
 
   /* 價格表 */
   .price-table { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
@@ -104,8 +134,6 @@
   .price-cat { font-size: 0.78rem; color: var(--text-dim); }
   .price-value { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; color: var(--green); }
   .price-value.shop { color: var(--orange); }
-
-  /* 稀有度標籤 */
   .badge-rare   { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-family: 'Rajdhani', sans-serif; background: #7c1f1f; color: #fca5a5; border: 1px solid #ef4444; }
   .badge-normal { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-family: 'Rajdhani', sans-serif; background: #1e2a3a; color: var(--text-dim); border: 1px solid var(--border); }
 
@@ -129,6 +157,9 @@
 
   <footer>碎夢邊境 · 遊戲資訊資料庫</footer>
 </div>
+
+<!-- 圖鑑小卡 Popup（fixed 在 body 層級） -->
+<div id="itemPopup"></div>
 
 <script src="data/crafting.js"></script>
 <script src="data/prices.js"></script>

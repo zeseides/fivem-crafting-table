@@ -12,7 +12,6 @@ const PAGES = {
 
 let currentPage = 'crafting';
 
-// ---------- 合成表狀態 ----------
 const craftingStations = [
   { key: 'all',     label: '全部' },
   { key: 'general', label: '一般合成台' },
@@ -21,10 +20,11 @@ const craftingStations = [
 let activeStation = 'all';
 let activeCat = '全部';
 
-// ---------- 共用工具 ----------
 function $(id) { return document.getElementById(id); }
 
-// ---------- 導覽列 ----------
+// ============================================================
+// 導覽列
+// ============================================================
 function renderNav() {
   $('navTabs').innerHTML = Object.entries(PAGES).map(([key, label]) =>
     `<button class="nav-tab ${currentPage === key ? 'active' : ''}" onclick="setPage('${key}')">${label}</button>`
@@ -35,9 +35,9 @@ function setPage(page) {
   currentPage = page;
   renderNav();
   renderPage();
+  closePopup();
 }
 
-// ---------- 頁面路由 ----------
 function renderPage() {
   $('pageContent').innerHTML = '';
   $('controls').innerHTML = '';
@@ -47,6 +47,66 @@ function renderPage() {
   else if (currentPage === 'items') renderItems();
   else if (currentPage === 'upgrades') renderUpgrades();
 }
+
+// ============================================================
+// 圖鑑小卡 Popup
+// ============================================================
+function buildItemPopupHtml(item) {
+  return `
+    <div class="popup-header">
+      <span class="popup-icon">${item.icon}</span>
+      <div>
+        <div class="popup-name">${item.name}</div>
+        <span class="badge badge-cat">${item.category}</span>
+      </div>
+    </div>
+    ${item.effect ? `<div class="popup-effect">✨ ${item.effect}</div>` : ''}
+    <div class="popup-divider"></div>
+    <div class="popup-label">獲取方式</div>
+    ${item.source.map(s => `<div class="popup-source">▸ ${s}</div>`).join('')}
+    ${item.note ? `<div class="popup-note">💡 ${item.note}</div>` : ''}
+  `;
+}
+
+function showItemPopup(name, triggerEl) {
+  const item = itemsData.find(i => i.name === name);
+  const popup = $('itemPopup');
+
+  if (!item) {
+    closePopup();
+    return;
+  }
+
+  popup.innerHTML = buildItemPopupHtml(item);
+
+  // 定位：優先顯示在觸發元素右方，空間不夠則左方
+  const rect = triggerEl.getBoundingClientRect();
+  const scrollY = window.scrollY;
+  popup.style.display = 'block';
+
+  const popupW = 260;
+  const spaceRight = window.innerWidth - rect.right - 12;
+  const left = spaceRight >= popupW
+    ? rect.right + 8
+    : rect.left - popupW - 8;
+
+  popup.style.left = Math.max(8, left) + 'px';
+  popup.style.top  = (rect.top + scrollY) + 'px';
+}
+
+function closePopup() {
+  const popup = $('itemPopup');
+  if (popup) popup.style.display = 'none';
+}
+
+// 點擊其他地方關閉
+document.addEventListener('click', e => {
+  const popup = $('itemPopup');
+  if (!popup) return;
+  if (!popup.contains(e.target) && !e.target.closest('.mat-link')) {
+    closePopup();
+  }
+});
 
 // ============================================================
 // 合成表頁面
@@ -104,6 +164,14 @@ function renderCatTabs() {
 function setStation(k) { activeStation = k; activeCat = '全部'; renderStationTabs(); renderCatTabs(); renderCraftingCards(); }
 function setCat(c) { activeCat = c; renderCatTabs(); renderCraftingCards(); }
 
+function matRowHtml(m) {
+  const hasInfo = itemsData.some(i => i.name === m.name);
+  const nameHtml = hasInfo
+    ? `<span class="mat-name mat-link" onclick="showItemPopup('${m.name}', this)">${m.name}</span>`
+    : `<span class="mat-name">${m.name}</span>`;
+  return `<div class="mat-row"><span class="mat-qty">${m.qty}×</span><span class="mat-icon">${m.icon}</span>${nameHtml}</div>`;
+}
+
 function craftCardHtml(item) {
   const isJob = item.stationType === 'job';
   const descHtml = item.desc ? `<div class="item-desc">${item.desc}</div>` : '';
@@ -125,7 +193,7 @@ function craftCardHtml(item) {
       <div class="divider"></div>
       <div class="materials-label">所需材料</div>
       <div class="materials">
-        ${item.materials.map(m => `<div class="mat-row"><span class="mat-qty">${m.qty}×</span><span class="mat-icon">${m.icon}</span><span class="mat-name">${m.name}</span></div>`).join('')}
+        ${item.materials.map(matRowHtml).join('')}
       </div>
     </div>`;
 }
@@ -203,15 +271,10 @@ function renderPriceCards() {
   }
 
   const sorted = [...list].sort((a, b) => a.sellPrice - b.sellPrice);
-
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${sorted.length}</span> / ${priceItems.length} 筆價格資料</div>
     <div class="price-table">
-      <div class="price-header-row">
-        <span>物品</span>
-        <span>類型</span>
-        <span>NPC 收購價</span>
-      </div>
+      <div class="price-header-row"><span>物品</span><span>類型</span><span>NPC 收購價</span></div>
       ${sorted.map(i => `
         <div class="price-row">
           <span class="price-item-name">${i.icon} ${i.name}</span>
@@ -226,7 +289,6 @@ function renderPriceCards() {
 // ============================================================
 // 商店購買價頁面
 // ============================================================
-let activeShopCat = '全部';
 let activeShopName = '全部';
 
 function renderShop() {
@@ -240,7 +302,6 @@ function renderShop() {
       <div class="tabs" id="shopNameTabs"></div>
     </div>
   `;
-  activeShopCat = '全部';
   activeShopName = '全部';
   renderShopNameTabs();
   renderShopCards();
@@ -267,10 +328,7 @@ function renderShopCards() {
   }
 
   const groups = {};
-  list.forEach(i => {
-    if (!groups[i.shop]) groups[i.shop] = [];
-    groups[i.shop].push(i);
-  });
+  list.forEach(i => { if (!groups[i.shop]) groups[i.shop] = []; groups[i.shop].push(i); });
 
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${shopItems.length} 筆商品</div>
@@ -304,34 +362,26 @@ function renderShopCards() {
 // ============================================================
 let activeItemCat = '全部';
 
-// 安全的 linkify：把純文字切成 token，只對文字部分做替換，不碰 HTML
 function linkifyText(text, currentItemName) {
-  // 按名稱長度由長到短，確保長名稱優先匹配（如「洗過的石頭」先於「石頭」）
   const names = itemsData
     .map(i => i.name)
     .filter(n => n !== currentItemName)
     .sort((a, b) => b.length - a.length);
 
-  // 把文字切成 [純文字, 純文字, ...] 的片段，逐段處理
-  // 用 PLACEHOLDER 機制：先把已替換的連結用佔位符保護，最後還原
   const placeholders = [];
-
   let result = text;
   names.forEach(name => {
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    result = result.replace(new RegExp(escaped, 'g'), match => {
+    result = result.replace(new RegExp(escaped, 'g'), () => {
       const idx = placeholders.length;
       placeholders.push(`<a class="item-link" href="#" onclick="jumpToItem('${name}');return false;">${name}</a>`);
-      return `\x00${idx}\x00`; // 用 NULL 字元包住 index 作為佔位符
+      return `\x00${idx}\x00`;
     });
   });
-
-  // 還原佔位符
   result = result.replace(/\x00(\d+)\x00/g, (_, idx) => placeholders[Number(idx)]);
   return result;
 }
 
-// 跳轉到指定物品並高亮
 function jumpToItem(name) {
   if (activeItemCat !== '全部') {
     activeItemCat = '全部';
@@ -342,7 +392,7 @@ function jumpToItem(name) {
   if (!target) return;
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
   target.classList.remove('highlight');
-  void target.offsetWidth; // 強制 reflow，讓動畫可以重新觸發
+  void target.offsetWidth;
   target.classList.add('highlight');
   setTimeout(() => target.classList.remove('highlight'), 1800);
 }
@@ -384,10 +434,7 @@ function renderItemCards() {
   }
 
   const groups = {};
-  list.forEach(i => {
-    if (!groups[i.category]) groups[i.category] = [];
-    groups[i.category].push(i);
-  });
+  list.forEach(i => { if (!groups[i.category]) groups[i.category] = []; groups[i.category].push(i); });
 
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${itemsData.length} 筆物品資料</div>
@@ -405,9 +452,7 @@ function renderItemCards() {
                 <div class="item-icon">${item.icon}</div>
                 <div class="item-info">
                   <div class="item-name">${item.name}</div>
-                  <div class="badges">
-                    <span class="badge badge-cat">${item.category}</span>
-                  </div>
+                  <div class="badges"><span class="badge badge-cat">${item.category}</span></div>
                   ${item.effect ? `<div class="item-desc">✨ ${item.effect}</div>` : ''}
                 </div>
               </div>
