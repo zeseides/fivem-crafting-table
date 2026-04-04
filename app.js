@@ -230,7 +230,6 @@ let activeShopCat = '全部';
 let activeShopName = '全部';
 
 function renderShop() {
-  const shops = ['全部', ...new Set(shopItems.map(i => i.shop))];
   $('controls').innerHTML = `
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -267,7 +266,6 @@ function renderShopCards() {
     return;
   }
 
-  // 按商店分群
   const groups = {};
   list.forEach(i => {
     if (!groups[i.shop]) groups[i.shop] = [];
@@ -305,6 +303,44 @@ function renderShopCards() {
 // 物品圖鑑頁面
 // ============================================================
 let activeItemCat = '全部';
+
+// 將文字中出現的物品名稱替換成超連結
+function linkifyText(text, currentItemName) {
+  // 按名稱長度由長到短排序，避免短名稱先替換掉長名稱的一部分
+  const names = itemsData
+    .map(i => i.name)
+    .filter(n => n !== currentItemName)
+    .sort((a, b) => b.length - a.length);
+
+  let result = text;
+  names.forEach(name => {
+    // 只替換完整詞，避免部分替換
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escaped, 'g');
+    result = result.replace(regex, `<a class="item-link" href="#" onclick="jumpToItem('${name}');return false;">${name}</a>`);
+  });
+  return result;
+}
+
+// 跳轉到指定物品並高亮
+function jumpToItem(name) {
+  // 若有篩選中，先切回全部
+  if (activeItemCat !== '全部') {
+    activeItemCat = '全部';
+    renderItemCatTabs();
+    renderItemCards();
+  }
+
+  // 找到目標卡片（用 data-item-name 屬性定位）
+  const target = document.querySelector(`[data-item-name="${name}"]`);
+  if (!target) return;
+
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  // 高亮閃爍效果
+  target.classList.add('highlight');
+  setTimeout(() => target.classList.remove('highlight'), 1800);
+}
 
 function renderItems() {
   $('controls').innerHTML = `
@@ -359,7 +395,7 @@ function renderItemCards() {
         </div>
         <div class="grid">
           ${items.map(item => `
-            <div class="card">
+            <div class="card" data-item-name="${item.name}">
               <div class="card-header">
                 <div class="item-icon">${item.icon}</div>
                 <div class="item-info">
@@ -373,9 +409,9 @@ function renderItemCards() {
               <div class="divider"></div>
               <div class="materials-label">獲取方式</div>
               <div class="materials">
-                ${item.source.map(s => `<div class="mat-row"><span class="mat-icon">▸</span><span class="mat-name">${s}</span></div>`).join('')}
+                ${item.source.map(s => `<div class="mat-row"><span class="mat-icon">▸</span><span class="mat-name">${linkifyText(s, item.name)}</span></div>`).join('')}
               </div>
-              ${item.note ? `<div class="item-note">💡 ${item.note}</div>` : ''}
+              ${item.note ? `<div class="item-note">💡 ${linkifyText(item.note, item.name)}</div>` : ''}
             </div>
           `).join('')}
         </div>
