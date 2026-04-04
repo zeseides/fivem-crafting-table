@@ -5,6 +5,7 @@
 const PAGES = {
   crafting: '合成表',
   prices:   'NPC收購價',
+  shop:     '商店購買價',
   items:    '物品圖鑑',
   upgrades: '物品升級',
 };
@@ -42,6 +43,7 @@ function renderPage() {
   $('controls').innerHTML = '';
   if (currentPage === 'crafting') renderCrafting();
   else if (currentPage === 'prices') renderPrices();
+  else if (currentPage === 'shop') renderShop();
   else if (currentPage === 'items') renderItems();
   else if (currentPage === 'upgrades') renderUpgrades();
 }
@@ -200,7 +202,6 @@ function renderPriceCards() {
     return;
   }
 
-  // 按價格由低到高排序
   const sorted = [...list].sort((a, b) => a.sellPrice - b.sellPrice);
 
   $('pageContent').innerHTML = `
@@ -219,6 +220,84 @@ function renderPriceCards() {
         </div>
       `).join('')}
     </div>
+  `;
+}
+
+// ============================================================
+// 商店購買價頁面
+// ============================================================
+let activeShopCat = '全部';
+let activeShopName = '全部';
+
+function renderShop() {
+  const shops = ['全部', ...new Set(shopItems.map(i => i.shop))];
+  $('controls').innerHTML = `
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="搜尋物品..." oninput="renderShopCards()">
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">商店</span>
+      <div class="tabs" id="shopNameTabs"></div>
+    </div>
+  `;
+  activeShopCat = '全部';
+  activeShopName = '全部';
+  renderShopNameTabs();
+  renderShopCards();
+}
+
+function renderShopNameTabs() {
+  const shops = ['全部', ...new Set(shopItems.map(i => i.shop))];
+  $('shopNameTabs').innerHTML = shops.map(s =>
+    `<button class="tab ${activeShopName === s ? 'active-station' : ''}" onclick="setShopName('${s}')">${s}</button>`
+  ).join('');
+}
+
+function setShopName(s) { activeShopName = s; renderShopNameTabs(); renderShopCards(); }
+
+function renderShopCards() {
+  const q = ($('searchInput') || {}).value || '';
+  let list = shopItems;
+  if (activeShopName !== '全部') list = list.filter(i => i.shop === activeShopName);
+  if (q) list = list.filter(i => i.name.includes(q) || i.shop.includes(q));
+
+  if (!list.length) {
+    $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
+    return;
+  }
+
+  // 按商店分群
+  const groups = {};
+  list.forEach(i => {
+    if (!groups[i.shop]) groups[i.shop] = [];
+    groups[i.shop].push(i);
+  });
+
+  $('pageContent').innerHTML = `
+    <div class="stats">顯示 <span>${list.length}</span> / ${shopItems.length} 筆商品</div>
+    ${Object.entries(groups).map(([shop, items]) => `
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">🏪</span>
+          <span class="section-title general">${shop}</span>
+          <span class="section-count">${items.length} 筆</span>
+        </div>
+        <div class="price-table">
+          <div class="price-header-row" style="grid-template-columns:1fr 100px 60px 140px">
+            <span>物品</span><span>類型</span><span>稀有度</span><span>購買價</span>
+          </div>
+          ${items.map(i => `
+            <div class="price-row" style="grid-template-columns:1fr 100px 60px 140px">
+              <span class="price-item-name">${i.icon} ${i.name}</span>
+              <span class="price-cat">${i.category}</span>
+              <span>${i.rarity === 'rare' ? '<span class="badge-rare">RARE</span>' : '<span class="badge-normal">普通</span>'}</span>
+              <span class="price-value shop">$ ${i.shopPrice.toLocaleString()}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
   `;
 }
 
@@ -263,7 +342,6 @@ function renderItemCards() {
     return;
   }
 
-  // 按類型分群
   const groups = {};
   list.forEach(i => {
     if (!groups[i.category]) groups[i.category] = [];
