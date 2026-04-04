@@ -102,6 +102,9 @@ function setCat(c) { activeCat = c; renderCatTabs(); renderCraftingCards(); }
 
 function craftCardHtml(item) {
   const isJob = item.stationType === 'job';
+  const descHtml = item.desc
+    ? `<div class="item-desc">${item.desc}</div>`
+    : '';
   return `
     <div class="card ${isJob ? 'job-card' : ''}">
       <div class="card-header">
@@ -114,6 +117,7 @@ function craftCardHtml(item) {
             <span class="badge badge-qty">×${item.qty}</span>
             <span class="badge badge-cat">${item.category}</span>
           </div>
+          ${descHtml}
         </div>
       </div>
       <div class="divider"></div>
@@ -159,8 +163,6 @@ function renderCraftingCards() {
 let activePriceCat = '全部';
 
 function renderPrices() {
-  const cats = ['全部', ...new Set(priceItems.map(i => i.category))];
-
   $('controls').innerHTML = `
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -225,7 +227,6 @@ function renderUpgrades() {
   $('pageContent').innerHTML = upgradeItems.length === 0
     ? `<div class="no-results"><div class="icon">⬆️</div><p>升級資料建置中，敬請期待</p></div>`
     : '';
-  // TODO: 升級資料有了之後實作
 }
 
 // ============================================================
