@@ -54,6 +54,22 @@ const itemsData = [
     category: '原料',
     effect: '',
     source: ['到羊毛採集點採集取得'],
+    note: '2 羊毛可加工出 1 布料',
+  },
+  {
+    name: '布料',
+    icon: '🧶',
+    category: '原料',
+    effect: '',
+    source: ['2 羊毛加工獲得'],
+    note: '2 布料可加工出 1 衣服',
+  },
+  {
+    name: '衣服',
+    icon: '👕',
+    category: '原料',
+    effect: '',
+    source: ['2 布料加工獲得'],
     note: '',
   },
 
