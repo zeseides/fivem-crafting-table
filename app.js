@@ -6,6 +6,7 @@ const PAGES = {
   crafting: '合成表',
   prices:   'NPC收購價',
   shop:     '商店購買價',
+  vehicles: '車輛價目',
   items:    '物品圖鑑',
   upgrades: '物品升級',
 };
@@ -44,6 +45,7 @@ function renderPage() {
   if (currentPage === 'crafting') renderCrafting();
   else if (currentPage === 'prices') renderPrices();
   else if (currentPage === 'shop') renderShop();
+  else if (currentPage === 'vehicles') renderVehicles();
   else if (currentPage === 'items') renderItems();
   else if (currentPage === 'upgrades') renderUpgrades();
 }
@@ -71,25 +73,14 @@ function buildItemPopupHtml(item) {
 function showItemPopup(name, triggerEl) {
   const item = itemsData.find(i => i.name === name);
   const popup = $('itemPopup');
-
-  if (!item) {
-    closePopup();
-    return;
-  }
-
+  if (!item) { closePopup(); return; }
   popup.innerHTML = buildItemPopupHtml(item);
-
-  // 定位：優先顯示在觸發元素右方，空間不夠則左方
   const rect = triggerEl.getBoundingClientRect();
   const scrollY = window.scrollY;
   popup.style.display = 'block';
-
   const popupW = 260;
   const spaceRight = window.innerWidth - rect.right - 12;
-  const left = spaceRight >= popupW
-    ? rect.right + 8
-    : rect.left - popupW - 8;
-
+  const left = spaceRight >= popupW ? rect.right + 8 : rect.left - popupW - 8;
   popup.style.left = Math.max(8, left) + 'px';
   popup.style.top  = (rect.top + scrollY) + 'px';
 }
@@ -99,13 +90,10 @@ function closePopup() {
   if (popup) popup.style.display = 'none';
 }
 
-// 點擊其他地方關閉
 document.addEventListener('click', e => {
   const popup = $('itemPopup');
   if (!popup) return;
-  if (!popup.contains(e.target) && !e.target.closest('.mat-link')) {
-    closePopup();
-  }
+  if (!popup.contains(e.target) && !e.target.closest('.mat-link')) closePopup();
 });
 
 // ============================================================
@@ -192,9 +180,7 @@ function craftCardHtml(item) {
       </div>
       <div class="divider"></div>
       <div class="materials-label">所需材料</div>
-      <div class="materials">
-        ${item.materials.map(matRowHtml).join('')}
-      </div>
+      <div class="materials">${item.materials.map(matRowHtml).join('')}</div>
     </div>`;
 }
 
@@ -204,10 +190,7 @@ function renderCraftingCards() {
     <div class="stats">顯示 <span>${visible.length}</span> / ${craftingItems.length} 筆合成配方</div>
     <div id="craftingContent"></div>
   `;
-  if (!visible.length) {
-    $('craftingContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的配方</p></div>`;
-    return;
-  }
+  if (!visible.length) { $('craftingContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的配方</p></div>`; return; }
   const groups = {};
   visible.forEach(i => {
     if (!groups[i.station]) groups[i.station] = { type: i.stationType, items: [] };
@@ -215,15 +198,7 @@ function renderCraftingCards() {
   });
   $('craftingContent').innerHTML = Object.entries(groups).map(([station, g]) => {
     const isJob = g.type === 'job';
-    return `
-      <div class="section">
-        <div class="section-header">
-          <span class="section-icon">${isJob ? '🏢' : '🔨'}</span>
-          <span class="section-title ${isJob ? 'job' : 'general'}">${station}</span>
-          <span class="section-count">${g.items.length} 筆</span>
-        </div>
-        <div class="grid">${g.items.map(craftCardHtml).join('')}</div>
-      </div>`;
+    return `<div class="section"><div class="section-header"><span class="section-icon">${isJob ? '🏢' : '🔨'}</span><span class="section-title ${isJob ? 'job' : 'general'}">${station}</span><span class="section-count">${g.items.length} 筆</span></div><div class="grid">${g.items.map(craftCardHtml).join('')}</div></div>`;
   }).join('');
 }
 
@@ -262,26 +237,18 @@ function renderPriceCards() {
   let list = priceItems;
   if (activePriceCat !== '全部') list = list.filter(i => i.category === activePriceCat);
   if (q) list = list.filter(i => i.name.includes(q));
-
   if (!list.length) {
     $('pageContent').innerHTML = priceItems.length === 0
       ? `<div class="no-results"><div class="icon">💰</div><p>價格資料建置中，敬請期待</p></div>`
       : `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
     return;
   }
-
   const sorted = [...list].sort((a, b) => a.sellPrice - b.sellPrice);
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${sorted.length}</span> / ${priceItems.length} 筆價格資料</div>
     <div class="price-table">
       <div class="price-header-row"><span>物品</span><span>類型</span><span>NPC 收購價</span></div>
-      ${sorted.map(i => `
-        <div class="price-row">
-          <span class="price-item-name">${i.icon} ${i.name}</span>
-          <span class="price-cat">${i.category}</span>
-          <span class="price-value">$ ${i.sellPrice.toLocaleString()}</span>
-        </div>
-      `).join('')}
+      ${sorted.map(i => `<div class="price-row"><span class="price-item-name">${i.icon} ${i.name}</span><span class="price-cat">${i.category}</span><span class="price-value">$ ${i.sellPrice.toLocaleString()}</span></div>`).join('')}
     </div>
   `;
 }
@@ -321,39 +288,90 @@ function renderShopCards() {
   let list = shopItems;
   if (activeShopName !== '全部') list = list.filter(i => i.shop === activeShopName);
   if (q) list = list.filter(i => i.name.includes(q) || i.shop.includes(q));
-
-  if (!list.length) {
-    $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
-    return;
-  }
-
+  if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`; return; }
   const groups = {};
   list.forEach(i => { if (!groups[i.shop]) groups[i.shop] = []; groups[i.shop].push(i); });
-
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${shopItems.length} 筆商品</div>
     ${Object.entries(groups).map(([shop, items]) => `
       <div class="section">
-        <div class="section-header">
-          <span class="section-icon">🏪</span>
-          <span class="section-title general">${shop}</span>
-          <span class="section-count">${items.length} 筆</span>
-        </div>
+        <div class="section-header"><span class="section-icon">🏪</span><span class="section-title general">${shop}</span><span class="section-count">${items.length} 筆</span></div>
         <div class="price-table">
-          <div class="price-header-row" style="grid-template-columns:1fr 100px 60px 140px">
-            <span>物品</span><span>類型</span><span>稀有度</span><span>購買價</span>
-          </div>
-          ${items.map(i => `
-            <div class="price-row" style="grid-template-columns:1fr 100px 60px 140px">
-              <span class="price-item-name">${i.icon} ${i.name}</span>
-              <span class="price-cat">${i.category}</span>
-              <span>${i.rarity === 'rare' ? '<span class="badge-rare">RARE</span>' : '<span class="badge-normal">普通</span>'}</span>
-              <span class="price-value shop">$ ${i.shopPrice.toLocaleString()}</span>
-            </div>
-          `).join('')}
+          <div class="price-header-row" style="grid-template-columns:1fr 100px 60px 140px"><span>物品</span><span>類型</span><span>稀有度</span><span>購買價</span></div>
+          ${items.map(i => `<div class="price-row" style="grid-template-columns:1fr 100px 60px 140px"><span class="price-item-name">${i.icon} ${i.name}</span><span class="price-cat">${i.category}</span><span>${i.rarity === 'rare' ? '<span class="badge-rare">RARE</span>' : '<span class="badge-normal">普通</span>'}</span><span class="price-value shop">$ ${i.shopPrice.toLocaleString()}</span></div>`).join('')}
         </div>
       </div>
     `).join('')}
+  `;
+}
+
+// ============================================================
+// 車輛價目頁面
+// ============================================================
+let activeVehicleBrand = '全部';
+
+function renderVehicles() {
+  const brands = ['全部', ...new Set(vehicleData.map(v => v.brand))];
+  $('controls').innerHTML = `
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="搜尋車款或品牌..." oninput="renderVehicleCards()">
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">品牌</span>
+      <div class="tabs" id="brandTabs"></div>
+    </div>
+  `;
+  activeVehicleBrand = '全部';
+  renderBrandTabs();
+  renderVehicleCards();
+}
+
+function renderBrandTabs() {
+  const brands = ['全部', ...new Set(vehicleData.map(v => v.brand))];
+  $('brandTabs').innerHTML = brands.map(b =>
+    `<button class="tab ${activeVehicleBrand === b ? 'active-cat' : ''}" onclick="setVehicleBrand('${b}')">${b}</button>`
+  ).join('');
+}
+
+function setVehicleBrand(b) { activeVehicleBrand = b; renderBrandTabs(); renderVehicleCards(); }
+
+function renderVehicleCards() {
+  const q = ($('searchInput') || {}).value || '';
+  let list = vehicleData;
+  if (activeVehicleBrand !== '全部') list = list.filter(v => v.brand === activeVehicleBrand);
+  if (q) list = list.filter(v => v.label.toLowerCase().includes(q.toLowerCase()) || v.brand.toLowerCase().includes(q.toLowerCase()));
+
+  if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的車款</p></div>`; return; }
+
+  // 按品牌分群
+  const groups = {};
+  list.forEach(v => { if (!groups[v.brand]) groups[v.brand] = []; groups[v.brand].push(v); });
+
+  $('pageContent').innerHTML = `
+    <div class="stats">顯示 <span>${list.length}</span> / ${vehicleData.length} 台車輛</div>
+    ${Object.entries(groups).map(([brand, vehicles]) => {
+      const sorted = [...vehicles].sort((a, b) => a.price - b.price);
+      return `
+        <div class="section">
+          <div class="section-header">
+            <span class="section-icon">🚗</span>
+            <span class="section-title general">${brand}</span>
+            <span class="section-count">${vehicles.length} 台</span>
+          </div>
+          <div class="price-table">
+            <div class="price-header-row" style="grid-template-columns:1fr 160px">
+              <span>車款</span><span>價格</span>
+            </div>
+            ${sorted.map(v => `
+              <div class="price-row" style="grid-template-columns:1fr 160px">
+                <span class="price-item-name">🚗 ${v.label}</span>
+                <span class="price-value vehicle">$ ${v.price.toLocaleString()}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
+    }).join('')}
   `;
 }
 
@@ -363,11 +381,7 @@ function renderShopCards() {
 let activeItemCat = '全部';
 
 function linkifyText(text, currentItemName) {
-  const names = itemsData
-    .map(i => i.name)
-    .filter(n => n !== currentItemName)
-    .sort((a, b) => b.length - a.length);
-
+  const names = itemsData.map(i => i.name).filter(n => n !== currentItemName).sort((a, b) => b.length - a.length);
   const placeholders = [];
   let result = text;
   names.forEach(name => {
@@ -383,11 +397,7 @@ function linkifyText(text, currentItemName) {
 }
 
 function jumpToItem(name) {
-  if (activeItemCat !== '全部') {
-    activeItemCat = '全部';
-    renderItemCatTabs();
-    renderItemCards();
-  }
+  if (activeItemCat !== '全部') { activeItemCat = '全部'; renderItemCatTabs(); renderItemCards(); }
   const target = document.querySelector(`[data-item-name="${name}"]`);
   if (!target) return;
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -427,24 +437,14 @@ function renderItemCards() {
   let list = itemsData;
   if (activeItemCat !== '全部') list = list.filter(i => i.category === activeItemCat);
   if (q) list = list.filter(i => i.name.includes(q) || i.source.some(s => s.includes(q)));
-
-  if (!list.length) {
-    $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
-    return;
-  }
-
+  if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`; return; }
   const groups = {};
   list.forEach(i => { if (!groups[i.category]) groups[i.category] = []; groups[i.category].push(i); });
-
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${itemsData.length} 筆物品資料</div>
     ${Object.entries(groups).map(([cat, items]) => `
       <div class="section">
-        <div class="section-header">
-          <span class="section-icon">📦</span>
-          <span class="section-title general">${cat}</span>
-          <span class="section-count">${items.length} 筆</span>
-        </div>
+        <div class="section-header"><span class="section-icon">📦</span><span class="section-title general">${cat}</span><span class="section-count">${items.length} 筆</span></div>
         <div class="grid">
           ${items.map(item => `
             <div class="card" data-item-name="${item.name}">
@@ -458,9 +458,7 @@ function renderItemCards() {
               </div>
               <div class="divider"></div>
               <div class="materials-label">獲取方式</div>
-              <div class="materials">
-                ${item.source.map(s => `<div class="mat-row"><span class="mat-icon">▸</span><span class="mat-name">${linkifyText(s, item.name)}</span></div>`).join('')}
-              </div>
+              <div class="materials">${item.source.map(s => `<div class="mat-row"><span class="mat-icon">▸</span><span class="mat-name">${linkifyText(s, item.name)}</span></div>`).join('')}</div>
               ${item.note ? `<div class="item-note">💡 ${linkifyText(item.note, item.name)}</div>` : ''}
             </div>
           `).join('')}
