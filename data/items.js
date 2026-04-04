@@ -13,7 +13,7 @@ const itemsData = [
     icon: '🛢️',
     category: '原料',
     effect: '',
-    source: ['透過採集取得'],
+    source: ['採集取得'],
     note: '1 原油可加工出 1 精煉油',
   },
   {
@@ -22,7 +22,15 @@ const itemsData = [
     category: '原料',
     effect: '',
     source: ['採集原油後加工獲得'],
-    note: '1 原油 → 1 精煉油',
+    note: '1 原油 → 1 精煉油｜1 精煉油可再加工出 1 食用油',
+  },
+  {
+    name: '食用油',
+    icon: '🫙',
+    category: '原料',
+    effect: '',
+    source: ['精煉油加工獲得'],
+    note: '1 精煉油 → 1 食用油',
   },
   {
     name: '火藥',
@@ -33,13 +41,47 @@ const itemsData = [
     note: '',
   },
 
+  // ── 礦石 ────────────────────────────────────────────────
+  {
+    name: '鐵',
+    icon: '🪨',
+    category: '礦石',
+    effect: '',
+    source: ['將洗過的石頭精煉獲得'],
+    note: '',
+  },
+  {
+    name: '銅',
+    icon: '🟠',
+    category: '礦石',
+    effect: '',
+    source: ['將洗過的石頭精煉獲得'],
+    note: '',
+  },
+  {
+    name: '黃金',
+    icon: '🟡',
+    category: '礦石',
+    effect: '',
+    source: ['將洗過的石頭精煉獲得'],
+    note: '',
+  },
+  {
+    name: '鑽石',
+    icon: '💎',
+    category: '礦石',
+    effect: '',
+    source: ['將洗過的石頭精煉獲得'],
+    note: '',
+  },
+
   // ── 食物 ────────────────────────────────────────────────
   {
     name: '麵包',
     icon: '🥖',
     category: '食物',
     effect: '補充 10% 飢餓值',
-    source: ['一般合成台合成'],
+    source: ['便利商店購買', '一般合成台合成'],
     note: '',
   },
   {
@@ -47,7 +89,7 @@ const itemsData = [
     icon: '🍶',
     category: '食物',
     effect: '補充 10% 口渴值',
-    source: ['一般合成台合成'],
+    source: ['便利商店購買', '一般合成台合成'],
     note: '',
   },
 ];
