@@ -304,40 +304,45 @@ function renderShopCards() {
 // ============================================================
 let activeItemCat = '全部';
 
-// 將文字中出現的物品名稱替換成超連結
+// 安全的 linkify：把純文字切成 token，只對文字部分做替換，不碰 HTML
 function linkifyText(text, currentItemName) {
-  // 按名稱長度由長到短排序，避免短名稱先替換掉長名稱的一部分
+  // 按名稱長度由長到短，確保長名稱優先匹配（如「洗過的石頭」先於「石頭」）
   const names = itemsData
     .map(i => i.name)
     .filter(n => n !== currentItemName)
     .sort((a, b) => b.length - a.length);
 
+  // 把文字切成 [純文字, 純文字, ...] 的片段，逐段處理
+  // 用 PLACEHOLDER 機制：先把已替換的連結用佔位符保護，最後還原
+  const placeholders = [];
+
   let result = text;
   names.forEach(name => {
-    // 只替換完整詞，避免部分替換
     const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(escaped, 'g');
-    result = result.replace(regex, `<a class="item-link" href="#" onclick="jumpToItem('${name}');return false;">${name}</a>`);
+    result = result.replace(new RegExp(escaped, 'g'), match => {
+      const idx = placeholders.length;
+      placeholders.push(`<a class="item-link" href="#" onclick="jumpToItem('${name}');return false;">${name}</a>`);
+      return `\x00${idx}\x00`; // 用 NULL 字元包住 index 作為佔位符
+    });
   });
+
+  // 還原佔位符
+  result = result.replace(/\x00(\d+)\x00/g, (_, idx) => placeholders[Number(idx)]);
   return result;
 }
 
 // 跳轉到指定物品並高亮
 function jumpToItem(name) {
-  // 若有篩選中，先切回全部
   if (activeItemCat !== '全部') {
     activeItemCat = '全部';
     renderItemCatTabs();
     renderItemCards();
   }
-
-  // 找到目標卡片（用 data-item-name 屬性定位）
   const target = document.querySelector(`[data-item-name="${name}"]`);
   if (!target) return;
-
   target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-  // 高亮閃爍效果
+  target.classList.remove('highlight');
+  void target.offsetWidth; // 強制 reflow，讓動畫可以重新觸發
   target.classList.add('highlight');
   setTimeout(() => target.classList.remove('highlight'), 1800);
 }
