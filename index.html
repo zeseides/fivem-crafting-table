@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>碎夢邊境 | 合成表查詢</title>
+<title>碎夢邊境 | 遊戲資訊查詢</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Rajdhani:wght@600;700&display=swap');
   :root {
@@ -14,21 +14,28 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; overflow-x: hidden; }
   body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
   .wrapper { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
 
-  header { margin-bottom: 36px; }
+  /* Header */
+  header { margin-bottom: 28px; }
   .server-label { font-size: 0.75rem; color: var(--accent-light); letter-spacing: 0.15em; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; margin-bottom: 6px; }
   .header-title { font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; font-size: 2.6rem; font-weight: 700; letter-spacing: 0.04em; background: linear-gradient(135deg, #fff 30%, var(--accent-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 6px; }
   .header-sub { color: var(--text-dim); font-size: 0.85rem; }
 
-  /* 兩層篩選 */
+  /* 主導覽 */
+  .nav { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .nav-tab { padding: 10px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); font-size: 0.9rem; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; transition: all .2s; margin-bottom: -1px; white-space: nowrap; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--accent-light); border-bottom-color: var(--accent-light); font-weight: 700; }
+
+  /* 篩選控制區 */
   .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
   .search-wrap { position: relative; }
   .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); width: 16px; height: 16px; }
   input[type="search"] { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 14px 10px 38px; border-radius: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; outline: none; transition: border-color .2s; }
   input[type="search"]:focus { border-color: var(--accent); }
   input[type="search"]::placeholder { color: var(--text-dim); }
-
   .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .filter-label { font-size: 0.72rem; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; letter-spacing: 0.08em; white-space: nowrap; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -38,7 +45,11 @@
   .tab.active-station.job { background: #7c3aed; border-color: #7c3aed; }
   .tab.active-cat { background: #1e3a5f; border-color: var(--accent-light); color: var(--accent-light); }
 
-  /* 合成台區塊標題 */
+  /* Stats */
+  .stats { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 16px; }
+  .stats span { color: var(--accent-light); font-weight: 700; }
+
+  /* 合成台區塊 */
   .section { margin-bottom: 36px; }
   .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
   .section-icon { font-size: 1.1rem; }
@@ -47,17 +58,14 @@
   .section-title.job { color: var(--purple); }
   .section-count { font-size: 0.75rem; color: var(--text-dim); }
 
-  .stats { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 20px; }
-  .stats span { color: var(--accent-light); font-weight: 700; }
+  /* 卡片 Grid */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
-
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: all .25s; position: relative; overflow: hidden; }
   .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; transition: opacity .3s; }
   .card.job-card::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
   .card:hover { background: var(--card-hover); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.18); }
   .card.job-card:hover { border-color: var(--purple); box-shadow: 0 8px 32px rgba(124,58,237,0.18); }
   .card:hover::before { opacity: 1; }
-
   .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .item-icon { width: 48px; height: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
   .item-info { flex: 1; }
@@ -69,7 +77,6 @@
   .badge-lvl { background: #1e3a5f; color: var(--accent-light); border: 1px solid var(--border); }
   .badge-qty { background: #1a2e1a; color: var(--green); border: 1px solid #14532d; }
   .badge-cat { background: #1e2a3a; color: var(--text-dim); border: 1px solid var(--border); font-size: 0.65rem; }
-
   .divider { height: 1px; background: var(--border); margin: 12px 0; }
   .materials-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-family: 'Rajdhani', sans-serif; }
   .materials { display: flex; flex-direction: column; gap: 5px; }
@@ -78,8 +85,20 @@
   .mat-icon { font-size: 1rem; }
   .mat-name { color: var(--text-dim); }
 
+  /* 價格表 */
+  .price-table { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .price-header-row { display: grid; grid-template-columns: 1fr 100px 140px; padding: 10px 18px; background: var(--surface); font-size: 0.75rem; color: var(--text-dim); font-family: 'Rajdhani', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+  .price-row { display: grid; grid-template-columns: 1fr 100px 140px; padding: 12px 18px; border-top: 1px solid var(--border); transition: background .2s; align-items: center; }
+  .price-row:hover { background: var(--card-hover); }
+  .price-item-name { font-weight: 700; font-size: 0.9rem; }
+  .price-cat { font-size: 0.78rem; color: var(--text-dim); }
+  .price-value { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; color: var(--green); }
+
+  /* 空狀態 */
   .no-results { text-align: center; padding: 80px 20px; color: var(--text-dim); }
   .no-results .icon { font-size: 3rem; margin-bottom: 12px; }
+  .no-results p { font-size: 0.9rem; }
+
   footer { margin-top: 48px; text-align: center; color: var(--text-dim); font-size: 0.75rem; border-top: 1px solid var(--border); padding-top: 20px; }
 </style>
 </head>
@@ -87,143 +106,20 @@
 <div class="wrapper">
   <header>
     <div class="server-label">⚔ 碎夢邊境 FiveM Server</div>
-    <div class="header-title">⚙ 合成表查詢</div>
-    <div class="header-sub">快速瀏覽所有可合成物品與所需材料</div>
+    <div class="header-title">遊戲資訊查詢</div>
+    <div class="header-sub">合成表 · NPC收購價格 · 物品升級</div>
   </header>
 
-  <div class="controls">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="search" id="searchInput" placeholder="搜尋物品或材料..." oninput="render()">
-    </div>
-    <div class="filter-row">
-      <span class="filter-label">合成台</span>
-      <div class="tabs" id="stationTabs"></div>
-    </div>
-    <div class="filter-row">
-      <span class="filter-label">類型</span>
-      <div class="tabs" id="catTabs"></div>
-    </div>
-  </div>
+  <nav class="nav" id="navTabs"></nav>
+  <div class="controls" id="controls"></div>
+  <div id="pageContent"></div>
 
-  <div class="stats" id="stats"></div>
-  <div id="content"></div>
-  <footer>碎夢邊境 · 合成表資料庫</footer>
+  <footer>碎夢邊境 · 遊戲資訊資料庫</footer>
 </div>
 
-<script>
-const items = [
-  // 一般合成台
-  { name: '小刀',     icon: '🔪', time: '00:30', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '武器',  materials: [{ qty: 20, icon: '🪨', name: '鐵' }, { qty: 20, icon: '🪵', name: '木頭' }] },
-  { name: '劣質防彈衣', icon: '🦺', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '防具',  materials: [{ qty: 10, icon: '🪨', name: '鐵' }, { qty: 20, icon: '🟤', name: '普通皮革' }, { qty: 10, icon: '🫧', name: '動物脂肪' }] },
-  { name: '氧氣瓶',   icon: '🧴', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '道具',  materials: [{ qty: 36, icon: '🛢️', name: '精煉油' }, { qty: 24, icon: '🐟', name: '魚' }, { qty: 40, icon: '🪨', name: '鐵' }, { qty: 1, icon: '📋', name: '製作圖' }, { qty: 5, icon: '🐢', name: '海龜' }] },
-  { name: '麵包',     icon: '🥖', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '食物',  materials: [{ qty: 10, icon: '🟤', name: '普通皮革' }, { qty: 50, icon: '🍗', name: '包裝雞肉' }] },
-  { name: '水',       icon: '🍶', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '食物',  materials: [{ qty: 50, icon: '🫙', name: '空瓶子' }] },
-  { name: '偷尼錢錢', icon: '👹', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '其他',  materials: [{ qty: 5, icon: '🪙', name: '偷尼碎片' }] },
-  // 公職合成台 - 修車廠
-  { name: '修車工具', icon: '🔧', time: '00:10', level: 0, qty: 1, station: '修車廠',    stationType: 'job',     category: '修車廠', materials: [{ qty: 5, icon: '⚙️', name: '修復好的引擎' }, { qty: 5, icon: '🪨', name: '洗過的石頭' }, { qty: 5, icon: '🔄', name: '修復好的輪胎' }] },
-];
-
-// 合成台清單（固定順序）
-const stations = [
-  { key: 'all',     label: '全部',     type: '' },
-  { key: 'general', label: '一般合成台', type: 'general' },
-  { key: 'job',     label: '公職合成台', type: 'job' },
-];
-
-let activeStation = 'all';
-let activeCat = '全部';
-
-function getVisibleItems() {
-  const q = document.getElementById('searchInput').value.trim();
-  return items.filter(i => {
-    if (activeStation !== 'all' && i.stationType !== activeStation) return false;
-    if (activeCat !== '全部' && i.category !== activeCat) return false;
-    if (q && !i.name.includes(q) && !i.materials.some(m => m.name.includes(q)) && !i.station.includes(q)) return false;
-    return true;
-  });
-}
-
-function getCatsForStation() {
-  const pool = activeStation === 'all' ? items : items.filter(i => i.stationType === activeStation);
-  return ['全部', ...new Set(pool.map(i => i.category))];
-}
-
-function renderStationTabs() {
-  document.getElementById('stationTabs').innerHTML = stations.map(s =>
-    `<button class="tab ${activeStation === s.key ? 'active-station' + (s.key === 'job' ? ' job' : '') : ''}" onclick="setStation('${s.key}')">${s.label}</button>`
-  ).join('');
-}
-
-function renderCatTabs() {
-  const cats = getCatsForStation();
-  if (!cats.includes(activeCat)) activeCat = '全部';
-  document.getElementById('catTabs').innerHTML = cats.map(c =>
-    `<button class="tab ${activeCat === c ? 'active-cat' : ''}" onclick="setCat('${c}')">${c}</button>`
-  ).join('');
-}
-
-function setStation(k) { activeStation = k; activeCat = '全部'; renderStationTabs(); renderCatTabs(); render(); }
-function setCat(c) { activeCat = c; renderCatTabs(); render(); }
-
-function cardHtml(item) {
-  const isJob = item.stationType === 'job';
-  return `
-    <div class="card ${isJob ? 'job-card' : ''}">
-      <div class="card-header">
-        <div class="item-icon">${item.icon}</div>
-        <div class="item-info">
-          <div class="item-name">${item.name}</div>
-          <div class="badges">
-            <span class="badge badge-time ${isJob ? 'job' : ''}">⏱ ${item.time}</span>
-            <span class="badge badge-lvl">LV ${item.level}</span>
-            <span class="badge badge-qty">×${item.qty}</span>
-            <span class="badge badge-cat">${item.category}</span>
-          </div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="materials-label">所需材料</div>
-      <div class="materials">
-        ${item.materials.map(m => `<div class="mat-row"><span class="mat-qty">${m.qty}×</span><span class="mat-icon">${m.icon}</span><span class="mat-name">${m.name}</span></div>`).join('')}
-      </div>
-    </div>`;
-}
-
-function render() {
-  const visible = getVisibleItems();
-  document.getElementById('stats').innerHTML = `顯示 <span>${visible.length}</span> / ${items.length} 筆合成配方`;
-
-  const content = document.getElementById('content');
-  if (!visible.length) {
-    content.innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的配方</p></div>`;
-    return;
-  }
-
-  // 依合成台分組顯示
-  const groups = {};
-  visible.forEach(i => {
-    if (!groups[i.station]) groups[i.station] = { type: i.stationType, items: [] };
-    groups[i.station].items.push(i);
-  });
-
-  content.innerHTML = Object.entries(groups).map(([station, g]) => {
-    const isJob = g.type === 'job';
-    return `
-      <div class="section">
-        <div class="section-header">
-          <span class="section-icon">${isJob ? '🏢' : '🔨'}</span>
-          <span class="section-title ${isJob ? 'job' : 'general'}">${station}</span>
-          <span class="section-count">${g.items.length} 筆</span>
-        </div>
-        <div class="grid">${g.items.map(cardHtml).join('')}</div>
-      </div>`;
-  }).join('');
-}
-
-renderStationTabs();
-renderCatTabs();
-render();
-</script>
+<script src="data/crafting.js"></script>
+<script src="data/prices.js"></script>
+<script src="data/upgrades.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
