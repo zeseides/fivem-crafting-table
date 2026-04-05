@@ -10,7 +10,7 @@ const vehicleData = [
   { label: '1983 Quattro Sport',                   price: 600000,  brand: 'Audi' },
   { label: '2017 A4 Quattro ABT',                  price: 600000,  brand: 'Audi' },
   { label: '2020 Q8 50TDI',                        price: 375000,  brand: 'Audi' },
-  { label: '2013 R8 V10',                          price: 47500,   brand: 'Audi' },
+  { label: '2013 R8 V10',                          price: 475000,  brand: 'Audi' },
   { label: '2020 R8',                              price: 1375000, brand: 'Audi' },
   { label: '2016 RS6 C7',                          price: 875000,  brand: 'Audi' },
   { label: '2020 RS7',                             price: 700000,  brand: 'Audi' },
