@@ -311,7 +311,6 @@ function renderShopCards() {
 let activeVehicleBrand = '全部';
 
 function renderVehicles() {
-  const brands = ['全部', ...new Set(vehicleData.map(v => v.brand))];
   $('controls').innerHTML = `
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -321,10 +320,23 @@ function renderVehicles() {
       <span class="filter-label">品牌</span>
       <div class="tabs" id="brandTabs"></div>
     </div>
+    <div class="filter-row">
+      <span class="filter-label">💰 預算查詢</span>
+      <div class="budget-wrap">
+        <span class="budget-prefix">$</span>
+        <input type="number" id="budgetInput" placeholder="輸入金額，顯示可購買車輛" min="0" oninput="renderVehicleCards()">
+        <button class="budget-clear" onclick="clearBudget()">✕</button>
+      </div>
+    </div>
   `;
   activeVehicleBrand = '全部';
   renderBrandTabs();
   renderVehicleCards();
+}
+
+function clearBudget() {
+  const el = $('budgetInput');
+  if (el) { el.value = ''; renderVehicleCards(); }
 }
 
 function renderBrandTabs() {
@@ -338,13 +350,41 @@ function setVehicleBrand(b) { activeVehicleBrand = b; renderBrandTabs(); renderV
 
 function renderVehicleCards() {
   const q = ($('searchInput') || {}).value || '';
+  const budgetVal = ($('budgetInput') || {}).value || '';
+  const budget = budgetVal !== '' ? parseInt(budgetVal) : null;
+
   let list = vehicleData;
   if (activeVehicleBrand !== '全部') list = list.filter(v => v.brand === activeVehicleBrand);
   if (q) list = list.filter(v => v.label.toLowerCase().includes(q.toLowerCase()) || v.brand.toLowerCase().includes(q.toLowerCase()));
+  if (budget !== null) list = list.filter(v => v.price <= budget);
 
-  if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的車款</p></div>`; return; }
+  if (!list.length) {
+    $('pageContent').innerHTML = `<div class="no-results"><div class="icon">${budget !== null ? '💸' : '🔍'}</div><p>${budget !== null ? `預算 $${budget.toLocaleString()} 以下無符合車輛` : '找不到符合的車款'}</p></div>`;
+    return;
+  }
 
-  // 按品牌分群
+  // 預算模式：全部攤平按價格排序，不按品牌分群
+  if (budget !== null) {
+    const sorted = [...list].sort((a, b) => a.price - b.price);
+    $('pageContent').innerHTML = `
+      <div class="stats">預算 <span>$${budget.toLocaleString()}</span> 以下共 <span>${sorted.length}</span> 台可購買</div>
+      <div class="price-table">
+        <div class="price-header-row" style="grid-template-columns:80px 1fr 160px">
+          <span>品牌</span><span>車款</span><span>價格</span>
+        </div>
+        ${sorted.map(v => `
+          <div class="price-row" style="grid-template-columns:80px 1fr 160px">
+            <span class="price-cat">${v.brand}</span>
+            <span class="price-item-name">🚗 ${v.label}</span>
+            <span class="price-value vehicle">$ ${v.price.toLocaleString()}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    return;
+  }
+
+  // 一般模式：按品牌分群
   const groups = {};
   list.forEach(v => { if (!groups[v.brand]) groups[v.brand] = []; groups[v.brand].push(v); });
 
