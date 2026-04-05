@@ -38,6 +38,18 @@
   .tab.active-station { background: var(--accent); border-color: var(--accent); color: #fff; }
   .tab.active-station.job { background: #7c3aed; border-color: #7c3aed; }
   .tab.active-cat { background: #1e3a5f; border-color: var(--accent-light); color: var(--accent-light); }
+
+  /* 預算輸入框 */
+  .budget-wrap { display: flex; align-items: center; gap: 0; flex: 1; max-width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color .2s; }
+  .budget-wrap:focus-within { border-color: var(--teal); }
+  .budget-prefix { padding: 0 10px; color: var(--teal); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; border-right: 1px solid var(--border); background: rgba(20,184,166,0.08); height: 38px; display: flex; align-items: center; }
+  input[type="number"] { flex: 1; background: transparent; border: none; color: var(--text); padding: 8px 12px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; outline: none; min-width: 0; }
+  input[type="number"]::placeholder { color: var(--text-dim); }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .budget-clear { background: none; border: none; color: var(--text-dim); padding: 0 10px; cursor: pointer; font-size: 0.85rem; height: 38px; transition: color .15s; border-left: 1px solid var(--border); }
+  .budget-clear:hover { color: var(--text); }
+
   .stats { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 16px; }
   .stats span { color: var(--accent-light); font-weight: 700; }
   .section { margin-bottom: 36px; }
