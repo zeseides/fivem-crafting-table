@@ -22,10 +22,13 @@ const priceItems = [
   { name: '動物骨頭',   icon: '🦴', category: '狩獵掉落', sellPrice: 30  },
   { name: '普通皮革',   icon: '🟤', category: '狩獵掉落', sellPrice: 150 },
 
-  // 食物
-  { name: '橘子',       icon: '🍊', category: '食物',   sellPrice: 300 },
-  { name: '橘子汁',     icon: '🧃', category: '食物',   sellPrice: 500 },
-  { name: '高麗菜乾',   icon: '🥬', category: '食物',   sellPrice: 600 },
-  { name: '鳳梨汁',     icon: '🍍', category: '食物',   sellPrice: 620 },
-  { name: '南瓜汁',     icon: '🎃', category: '食物',   sellPrice: 700 },
+  // 農產
+  { name: '橘子',       icon: '🍊', category: '農產',   sellPrice: 300 },
+  { name: '橘子汁',     icon: '🧃', category: '農產',   sellPrice: 500 },
+  { name: '高麗菜',     icon: '🥬', category: '農產',   sellPrice: 400 },
+  { name: '高麗菜乾',   icon: '🥬', category: '農產',   sellPrice: 600 },
+  { name: '鳳梨',       icon: '🍍', category: '農產',   sellPrice: 470 },
+  { name: '鳳梨汁',     icon: '🍹', category: '農產',   sellPrice: 620 },
+  { name: '南瓜',       icon: '🎃', category: '農產',   sellPrice: 500 },
+  { name: '南瓜汁',     icon: '🥤', category: '農產',   sellPrice: 700 },
 ];
