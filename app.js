@@ -7,6 +7,7 @@ const PAGES = {
   prices:   'NPC收購價',
   shop:     '商店購買價',
   vehicles: '車輛價目',
+  drugs:    '毒品價格',
   items:    '物品圖鑑',
   upgrades: '物品升級',
 };
@@ -46,6 +47,7 @@ function renderPage() {
   else if (currentPage === 'prices') renderPrices();
   else if (currentPage === 'shop') renderShop();
   else if (currentPage === 'vehicles') renderVehicles();
+  else if (currentPage === 'drugs') renderDrugs();
   else if (currentPage === 'items') renderItems();
   else if (currentPage === 'upgrades') renderUpgrades();
 }
@@ -363,7 +365,6 @@ function renderVehicleCards() {
     return;
   }
 
-  // 預算模式：全部攤平按價格排序，不按品牌分群
   if (budget !== null) {
     const sorted = [...list].sort((a, b) => a.price - b.price);
     $('pageContent').innerHTML = `
@@ -384,10 +385,8 @@ function renderVehicleCards() {
     return;
   }
 
-  // 一般模式：按品牌分群
   const groups = {};
   list.forEach(v => { if (!groups[v.brand]) groups[v.brand] = []; groups[v.brand].push(v); });
-
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${vehicleData.length} 台車輛</div>
     ${Object.entries(groups).map(([brand, vehicles]) => {
@@ -400,18 +399,68 @@ function renderVehicleCards() {
             <span class="section-count">${vehicles.length} 台</span>
           </div>
           <div class="price-table">
-            <div class="price-header-row" style="grid-template-columns:1fr 160px">
-              <span>車款</span><span>價格</span>
-            </div>
-            ${sorted.map(v => `
-              <div class="price-row" style="grid-template-columns:1fr 160px">
-                <span class="price-item-name">🚗 ${v.label}</span>
-                <span class="price-value vehicle">$ ${v.price.toLocaleString()}</span>
-              </div>
-            `).join('')}
+            <div class="price-header-row" style="grid-template-columns:1fr 160px"><span>車款</span><span>價格</span></div>
+            ${sorted.map(v => `<div class="price-row" style="grid-template-columns:1fr 160px"><span class="price-item-name">🚗 ${v.label}</span><span class="price-value vehicle">$ ${v.price.toLocaleString()}</span></div>`).join('')}
           </div>
         </div>`;
     }).join('')}
+  `;
+}
+
+// ============================================================
+// 毒品價格頁面
+// ============================================================
+function renderDrugs() {
+  $('controls').innerHTML = '';
+
+  const r = moneyLaunderingRules;
+  const exampleBlack = 100000;
+  const exampleWhite = Math.floor(exampleBlack * r.rate);
+
+  $('pageContent').innerHTML = `
+    <div class="drug-warning">
+      ⚠️ 此頁面價格均為「黑錢」單位，幫會有權小幅更動價格。一切以幫會實際公告為準。
+    </div>
+
+    <div class="drug-grid">
+      ${drugData.map(drug => `
+        <div class="drug-card">
+          <div class="drug-card-header">
+            <span class="drug-icon">${drug.icon}</span>
+            <span class="drug-name">${drug.name}</span>
+          </div>
+          <div class="drug-tiers">
+            ${drug.tiers.map((t, idx) => `
+              <div class="drug-tier tier-${idx}">
+                <span class="tier-label">${t.label}</span>
+                <span class="tier-price">💹 ${t.price.toLocaleString()}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="launder-section">
+      <div class="section-header">
+        <span class="section-icon">💸</span>
+        <span class="section-title drug-title">洗黑錢規則</span>
+      </div>
+      <div class="launder-rules">
+        <div class="launder-row">
+          <span class="launder-label">洗錢匯率</span>
+          <span class="launder-value">1 黑錢 → <strong>${r.rate}</strong> 白錢</span>
+        </div>
+        <div class="launder-row">
+          <span class="launder-label">單次最低限額</span>
+          <span class="launder-value"><strong>${r.minAmount.toLocaleString()}</strong> 黑錢 才能洗</span>
+        </div>
+        <div class="launder-row example">
+          <span class="launder-label">💡 範例</span>
+          <span class="launder-value">${exampleBlack.toLocaleString()} 黑錢 → <strong>${exampleWhite.toLocaleString()}</strong> 白錢</span>
+        </div>
+      </div>
+    </div>
   `;
 }
 

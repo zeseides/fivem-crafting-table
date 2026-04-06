@@ -11,6 +11,7 @@
     --border: #1e3a5f; --accent: #2563eb; --accent-light: #60a5fa;
     --text: #e2e8f0; --text-dim: #94a3b8; --green: #10b981; --yellow: #f59e0b;
     --purple: #a78bfa; --orange: #f97316; --teal: #14b8a6;
+    --red: #ef4444; --drug-dark: #1a0a0a; --drug-border: #7f1d1d;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Noto Sans TC', sans-serif; min-height: 100vh; overflow-x: hidden; }
@@ -38,18 +39,14 @@
   .tab.active-station { background: var(--accent); border-color: var(--accent); color: #fff; }
   .tab.active-station.job { background: #7c3aed; border-color: #7c3aed; }
   .tab.active-cat { background: #1e3a5f; border-color: var(--accent-light); color: var(--accent-light); }
-
-  /* 預算輸入框 */
   .budget-wrap { display: flex; align-items: center; gap: 0; flex: 1; max-width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: border-color .2s; }
   .budget-wrap:focus-within { border-color: var(--teal); }
   .budget-prefix { padding: 0 10px; color: var(--teal); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; border-right: 1px solid var(--border); background: rgba(20,184,166,0.08); height: 38px; display: flex; align-items: center; }
   input[type="number"] { flex: 1; background: transparent; border: none; color: var(--text); padding: 8px 12px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; outline: none; min-width: 0; }
   input[type="number"]::placeholder { color: var(--text-dim); }
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
   .budget-clear { background: none; border: none; color: var(--text-dim); padding: 0 10px; cursor: pointer; font-size: 0.85rem; height: 38px; transition: color .15s; border-left: 1px solid var(--border); }
   .budget-clear:hover { color: var(--text); }
-
   .stats { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 16px; }
   .stats span { color: var(--accent-light); font-weight: 700; }
   .section { margin-bottom: 36px; }
@@ -58,6 +55,7 @@
   .section-title { font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.05em; }
   .section-title.general { color: var(--accent-light); }
   .section-title.job { color: var(--purple); }
+  .section-title.drug-title { color: #fca5a5; }
   .section-count { font-size: 0.75rem; color: var(--text-dim); }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px; transition: all .25s; position: relative; overflow: hidden; }
@@ -66,11 +64,7 @@
   .card:hover { background: var(--card-hover); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.18); }
   .card.job-card:hover { border-color: var(--purple); box-shadow: 0 8px 32px rgba(124,58,237,0.18); }
   .card:hover::before { opacity: 1; }
-  @keyframes highlightPulse {
-    0%   { border-color: var(--yellow); box-shadow: 0 0 0 0 rgba(245,158,11,0.6); }
-    50%  { border-color: var(--yellow); box-shadow: 0 0 20px 6px rgba(245,158,11,0.3); }
-    100% { border-color: var(--border); box-shadow: none; }
-  }
+  @keyframes highlightPulse { 0% { border-color: var(--yellow); box-shadow: 0 0 0 0 rgba(245,158,11,0.6); } 50% { border-color: var(--yellow); box-shadow: 0 0 20px 6px rgba(245,158,11,0.3); } 100% { border-color: var(--border); box-shadow: none; } }
   .card.highlight { animation: highlightPulse 1.8s ease-out forwards; }
   .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
   .item-icon { width: 48px; height: 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; align-self: flex-start; }
@@ -116,6 +110,31 @@
   .price-value.vehicle { color: var(--teal); }
   .badge-rare { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-family: 'Rajdhani', sans-serif; background: #7c1f1f; color: #fca5a5; border: 1px solid #ef4444; }
   .badge-normal { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-family: 'Rajdhani', sans-serif; background: #1e2a3a; color: var(--text-dim); border: 1px solid var(--border); }
+
+  /* 毒品頁面樣式 */
+  .drug-warning { background: rgba(127,29,29,0.25); border: 1px solid var(--drug-border); border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; color: #fca5a5; margin-bottom: 24px; line-height: 1.5; }
+  .drug-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-bottom: 32px; }
+  .drug-card { background: #120808; border: 1px solid var(--drug-border); border-radius: 12px; overflow: hidden; }
+  .drug-card-header { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid var(--drug-border); }
+  .drug-icon { font-size: 1.4rem; }
+  .drug-name { font-size: 1rem; font-weight: 700; color: #fca5a5; font-family: 'Rajdhani', 'Noto Sans TC', sans-serif; letter-spacing: 0.04em; }
+  .drug-tiers { display: flex; flex-direction: column; }
+  .drug-tier { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; border-top: 1px solid rgba(127,29,29,0.4); transition: background .15s; }
+  .drug-tier:hover { background: rgba(127,29,29,0.2); }
+  .drug-tier.tier-0 { background: rgba(30,20,20,0.5); }
+  .drug-tier.tier-1 { background: rgba(40,15,15,0.5); }
+  .drug-tier.tier-2 { background: rgba(50,10,10,0.5); }
+  .tier-label { font-size: 0.8rem; color: #f87171; }
+  .tier-price { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; color: #fbbf24; }
+  .launder-section { margin-top: 8px; }
+  .launder-rules { background: #120808; border: 1px solid var(--drug-border); border-radius: 12px; overflow: hidden; }
+  .launder-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-top: 1px solid rgba(127,29,29,0.3); font-size: 0.88rem; }
+  .launder-row:first-child { border-top: none; }
+  .launder-row.example { background: rgba(127,29,29,0.15); }
+  .launder-label { color: #f87171; font-size: 0.8rem; }
+  .launder-value { color: var(--text); }
+  .launder-value strong { color: #fbbf24; font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; }
+
   .no-results { text-align: center; padding: 80px 20px; color: var(--text-dim); }
   .no-results .icon { font-size: 3rem; margin-bottom: 12px; }
   .no-results p { font-size: 0.9rem; }
@@ -127,7 +146,7 @@
   <header>
     <div class="server-label">⚔ 碎夢邊境 FiveM Server</div>
     <div class="header-title">遊戲資訊查詢</div>
-    <div class="header-sub">合成表 · NPC收購價 · 商店購買價 · 車輛價目 · 物品圖鑑 · 物品升級</div>
+    <div class="header-sub">合成表 · NPC收購價 · 商店購買價 · 車輛價目 · 毒品價格 · 物品圖鑑 · 物品升級</div>
   </header>
   <nav class="nav" id="navTabs"></nav>
   <div class="controls" id="controls"></div>
@@ -139,6 +158,7 @@
 <script src="data/prices.js"></script>
 <script src="data/shop.js"></script>
 <script src="data/vehicles.js"></script>
+<script src="data/drugs.js"></script>
 <script src="data/items.js"></script>
 <script src="data/upgrades.js"></script>
 <script src="app.js"></script>
