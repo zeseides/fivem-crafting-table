@@ -208,9 +208,13 @@ function renderCraftingCards() {
 }
 
 // ============================================================
-// NPC 收購價格頁面（物品名稱可 hover 顯示圖鑑）
+// NPC 收購價格頁面
+// 農產品保留原始陣列順序（原料→加工品配對），其他類別按價格排序
 // ============================================================
 let activePriceCat = '全部';
+
+// 保留原始順序的類別（有加工配對關係的）
+const KEEP_ORDER_CATS = new Set(['農產']);
 
 function renderPrices() {
   $('controls').innerHTML = `
@@ -248,7 +252,19 @@ function renderPriceCards() {
       : `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`;
     return;
   }
-  const sorted = [...list].sort((a, b) => a.sellPrice - b.sellPrice);
+
+  // 農產品保留原始順序，其他類別按價格排序
+  const sorted = [...list].sort((a, b) => {
+    const aKeep = KEEP_ORDER_CATS.has(a.category);
+    const bKeep = KEEP_ORDER_CATS.has(b.category);
+    // 兩者都是保留順序類別 → 維持原始順序（不交換）
+    if (aKeep && bKeep) return 0;
+    // 兩者都是一般類別 → 按價格排
+    if (!aKeep && !bKeep) return a.sellPrice - b.sellPrice;
+    // 混合時按價格排（通常不會發生，篩選後同類別）
+    return a.sellPrice - b.sellPrice;
+  });
+
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${sorted.length}</span> / ${priceItems.length} 筆價格資料</div>
     <div class="price-table">
@@ -593,7 +609,6 @@ function renderItemCards() {
   if (q) list = list.filter(i => i.name.includes(q) || i.source.some(s => s.includes(q)));
   if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`; return; }
 
-  // 用 Map 保留 itemsData 原始陣列的插入順序
   const groupMap = new Map();
   list.forEach(i => { if (!groupMap.has(i.category)) groupMap.set(i.category, []); groupMap.get(i.category).push(i); });
 
