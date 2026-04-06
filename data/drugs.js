@@ -28,7 +28,7 @@ const drugData = [
     tiers: [
       { label: '1−2等 （低等級）', price: 400 },
       { label: '3−4等 （中等級）', price: 800 },
-      { label: '5−6等 （高等級）', price: 10000 },
+      { label: '5−6等 （高等級）', price: 1000 },
     ],
   },
   {
@@ -37,13 +37,13 @@ const drugData = [
     tiers: [
       { label: '1−2等 （低等級）', price: 300 },
       { label: '3−4等 （中等級）', price: 700 },
-      { label: '5−6等 （高等級）', price: 9000 },
+      { label: '5−6等 （高等級）', price: 900 },
     ],
   },
 ];
 
 // 洗黑錢規則
 const moneyLaunderingRules = {
-  rate: 0.7,       // 1 黑錢 : 0.7 白錢
-  minAmount: 50000, // 最少一次 5萧50000 黑錢
+  rate: 0.7,        // 1 黑錢 : 0.7 白錢
+  minAmount: 50000, // 最少一次 50000 黑錢才能洗
 };
