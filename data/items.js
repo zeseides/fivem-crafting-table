@@ -167,6 +167,72 @@ const itemsData = [
     note: '',
   },
 
+  // ── 農產 ────────────────────────────────────────────────
+  {
+    name: '高麗菜',
+    icon: '🥬',
+    category: '農產',
+    effect: '',
+    source: ['採集取得'],
+    note: '2 高麗菜可加工出 1 高麗菜乾',
+  },
+  {
+    name: '高麗菜乾',
+    icon: '🥬',
+    category: '農產',
+    effect: '',
+    source: ['2 高麗菜加工獲得'],
+    note: '',
+  },
+  {
+    name: '橘子',
+    icon: '🍊',
+    category: '農產',
+    effect: '',
+    source: ['採集取得'],
+    note: '2 橘子可加工出 1 橘子汁',
+  },
+  {
+    name: '橘子汁',
+    icon: '🧃',
+    category: '農產',
+    effect: '',
+    source: ['2 橘子加工獲得'],
+    note: '',
+  },
+  {
+    name: '鳳梨',
+    icon: '🍍',
+    category: '農產',
+    effect: '',
+    source: ['採集取得'],
+    note: '2 鳳梨可加工出 1 鳳梨汁',
+  },
+  {
+    name: '鳳梨汁',
+    icon: '🍹',
+    category: '農產',
+    effect: '',
+    source: ['2 鳳梨加工獲得'],
+    note: '',
+  },
+  {
+    name: '南瓜',
+    icon: '🎃',
+    category: '農產',
+    effect: '',
+    source: ['採集取得'],
+    note: '2 南瓜可加工出 1 南瓜汁',
+  },
+  {
+    name: '南瓜汁',
+    icon: '🥤',
+    category: '農產',
+    effect: '',
+    source: ['2 南瓜加工獲得'],
+    note: '',
+  },
+
   // ── 狩獵掉落 ─────────────────────────────────────────────
   {
     name: '動物脂肪',
