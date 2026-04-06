@@ -56,7 +56,7 @@ function renderPage() {
 }
 
 // ============================================================
-// 圖鑑小卡 Popup
+// 圖鑑小卡 Popup（共用）
 // ============================================================
 function buildItemPopupHtml(item) {
   return `
@@ -98,7 +98,7 @@ function closePopup() {
 document.addEventListener('click', e => {
   const popup = $('itemPopup');
   if (!popup) return;
-  if (!popup.contains(e.target) && !e.target.closest('.mat-link')) closePopup();
+  if (!popup.contains(e.target) && !e.target.closest('.mat-link') && !e.target.closest('.price-name-link')) closePopup();
 });
 
 // ============================================================
@@ -196,19 +196,19 @@ function renderCraftingCards() {
     <div id="craftingContent"></div>
   `;
   if (!visible.length) { $('craftingContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的配方</p></div>`; return; }
-  const groups = {};
+  const groupMap = new Map();
   visible.forEach(i => {
-    if (!groups[i.station]) groups[i.station] = { type: i.stationType, items: [] };
-    groups[i.station].items.push(i);
+    if (!groupMap.has(i.station)) groupMap.set(i.station, { type: i.stationType, items: [] });
+    groupMap.get(i.station).items.push(i);
   });
-  $('craftingContent').innerHTML = Object.entries(groups).map(([station, g]) => {
+  $('craftingContent').innerHTML = [...groupMap.entries()].map(([station, g]) => {
     const isJob = g.type === 'job';
     return `<div class="section"><div class="section-header"><span class="section-icon">${isJob ? '🏢' : '🔨'}</span><span class="section-title ${isJob ? 'job' : 'general'}">${station}</span><span class="section-count">${g.items.length} 筆</span></div><div class="grid">${g.items.map(craftCardHtml).join('')}</div></div>`;
   }).join('');
 }
 
 // ============================================================
-// NPC 收購價格頁面
+// NPC 收購價格頁面（物品名稱可 hover 顯示圖鑑）
 // ============================================================
 let activePriceCat = '全部';
 
@@ -253,7 +253,13 @@ function renderPriceCards() {
     <div class="stats">顯示 <span>${sorted.length}</span> / ${priceItems.length} 筆價格資料</div>
     <div class="price-table">
       <div class="price-header-row"><span>物品</span><span>類型</span><span>NPC 收購價</span></div>
-      ${sorted.map(i => `<div class="price-row"><span class="price-item-name">${i.icon} ${i.name}</span><span class="price-cat">${i.category}</span><span class="price-value">$ ${i.sellPrice.toLocaleString()}</span></div>`).join('')}
+      ${sorted.map(i => {
+        const hasInfo = itemsData.some(d => d.name === i.name);
+        const nameHtml = hasInfo
+          ? `<span class="price-name-link" onclick="showItemPopup('${i.name}', this)">${i.icon} ${i.name}</span>`
+          : `${i.icon} ${i.name}`;
+        return `<div class="price-row"><span class="price-item-name">${nameHtml}</span><span class="price-cat">${i.category}</span><span class="price-value">$ ${i.sellPrice.toLocaleString()}</span></div>`;
+      }).join('')}
     </div>
   `;
 }
@@ -294,11 +300,11 @@ function renderShopCards() {
   if (activeShopName !== '全部') list = list.filter(i => i.shop === activeShopName);
   if (q) list = list.filter(i => i.name.includes(q) || i.shop.includes(q));
   if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`; return; }
-  const groups = {};
-  list.forEach(i => { if (!groups[i.shop]) groups[i.shop] = []; groups[i.shop].push(i); });
+  const groupMap = new Map();
+  list.forEach(i => { if (!groupMap.has(i.shop)) groupMap.set(i.shop, []); groupMap.get(i.shop).push(i); });
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${shopItems.length} 筆商品</div>
-    ${Object.entries(groups).map(([shop, items]) => `
+    ${[...groupMap.entries()].map(([shop, items]) => `
       <div class="section">
         <div class="section-header"><span class="section-icon">🏪</span><span class="section-title general">${shop}</span><span class="section-count">${items.length} 筆</span></div>
         <div class="price-table">
@@ -375,11 +381,11 @@ function renderVehicleCards() {
       </div>`;
     return;
   }
-  const groups = {};
-  list.forEach(v => { if (!groups[v.brand]) groups[v.brand] = []; groups[v.brand].push(v); });
+  const groupMap = new Map();
+  list.forEach(v => { if (!groupMap.has(v.brand)) groupMap.set(v.brand, []); groupMap.get(v.brand).push(v); });
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${vehicleData.length} 台車輛</div>
-    ${Object.entries(groups).map(([brand, vehicles]) => {
+    ${[...groupMap.entries()].map(([brand, vehicles]) => {
       const sorted = [...vehicles].sort((a, b) => a.price - b.price);
       return `<div class="section"><div class="section-header"><span class="section-icon">🚗</span><span class="section-title general">${brand}</span><span class="section-count">${vehicles.length} 台</span></div><div class="price-table"><div class="price-header-row" style="grid-template-columns:1fr 160px"><span>車款</span><span>價格</span></div>${sorted.map(v => `<div class="price-row" style="grid-template-columns:1fr 160px"><span class="price-item-name">🚗 ${v.label}</span><span class="price-value vehicle">$ ${v.price.toLocaleString()}</span></div>`).join('')}</div></div>`;
     }).join('')}`;
@@ -438,12 +444,8 @@ function setGang(id) {
 function renderGangContent() {
   const gang = gangData.find(g => g.id === activeGangId);
   if (!gang) return;
+  const c = gang.color, border = gang.borderColor, bg = gang.bgColor;
 
-  const c = gang.color;
-  const border = gang.borderColor;
-  const bg = gang.bgColor;
-
-  // 規章（可折疊）
   const rulesHtml = `
     <div class="gang-section" style="--gc:${c};--gb:${border};--gbg:${bg}">
       <div class="gang-section-header" onclick="this.parentElement.classList.toggle('collapsed')">
@@ -457,12 +459,9 @@ function renderGangContent() {
       </div>
     </div>`;
 
-  // 服務區塊
   const servicesHtml = gang.services.map(svc => {
     let bodyHtml = '';
-
     if (svc.drugs) {
-      // 毒品格式
       bodyHtml = `
         ${svc.note ? `<div class="gang-note">⚠️ ${svc.note}</div>` : ''}
         <div class="gang-drug-grid">
@@ -477,7 +476,6 @@ function renderGangContent() {
             </div>`).join('')}
         </div>`;
     } else if (svc.tiers) {
-      // 贓物收購格式
       bodyHtml = `
         ${svc.note ? `<div class="gang-note">⚠️ ${svc.note}</div>` : ''}
         <div class="gang-tier-grid">
@@ -491,7 +489,6 @@ function renderGangContent() {
             </div>`).join('')}
         </div>`;
     } else if (svc.items) {
-      // 一般商品 / 規則格式
       bodyHtml = svc.items.map(it => {
         if (it.value) {
           return `<div class="gang-rule-row"><span class="gang-rule-key">${it.name}</span><span class="gang-rule-val">${it.value}</span>${it.note ? `<span class="gang-rule-note">${it.note}</span>` : ''}</div>`;
@@ -502,17 +499,13 @@ function renderGangContent() {
         return `<div class="gang-item-row"><span class="gang-item-name">${it.name}</span>${priceStr}</div>`;
       }).join('');
     }
-
     return `
       <div class="gang-section" style="--gc:${c};--gb:${border};--gbg:${bg}">
-        <div class="gang-section-header">
-          <span>${svc.icon} ${svc.title}</span>
-        </div>
+        <div class="gang-section-header"><span>${svc.icon} ${svc.title}</span></div>
         <div class="gang-section-body">${bodyHtml}</div>
       </div>`;
   }).join('');
 
-  // 黑單（深淵會才有）
   const blacklistHtml = gang.blacklist ? `
     <div class="gang-section" style="--gc:${c};--gb:${border};--gbg:${bg}">
       <div class="gang-section-header"><span>🚫 黑單費用</span></div>
@@ -537,7 +530,7 @@ function renderGangContent() {
 }
 
 // ============================================================
-// 物品圖鑑頁面
+// 物品圖鑑頁面（使用 Map 保留陣列順序）
 // ============================================================
 let activeItemCat = '全部';
 
@@ -599,11 +592,14 @@ function renderItemCards() {
   if (activeItemCat !== '全部') list = list.filter(i => i.category === activeItemCat);
   if (q) list = list.filter(i => i.name.includes(q) || i.source.some(s => s.includes(q)));
   if (!list.length) { $('pageContent').innerHTML = `<div class="no-results"><div class="icon">🔍</div><p>找不到符合的物品</p></div>`; return; }
-  const groups = {};
-  list.forEach(i => { if (!groups[i.category]) groups[i.category] = []; groups[i.category].push(i); });
+
+  // 用 Map 保留 itemsData 原始陣列的插入順序
+  const groupMap = new Map();
+  list.forEach(i => { if (!groupMap.has(i.category)) groupMap.set(i.category, []); groupMap.get(i.category).push(i); });
+
   $('pageContent').innerHTML = `
     <div class="stats">顯示 <span>${list.length}</span> / ${itemsData.length} 筆物品資料</div>
-    ${Object.entries(groups).map(([cat, items]) => `
+    ${[...groupMap.entries()].map(([cat, items]) => `
       <div class="section">
         <div class="section-header"><span class="section-icon">📦</span><span class="section-title general">${cat}</span><span class="section-count">${items.length} 筆</span></div>
         <div class="grid">
