@@ -80,7 +80,7 @@ const itemsData = [
     category: '木材',
     effect: '',
     source: ['在「百年死木」採集取得'],
-    note: '2 木頭可加工出 1 杉木',
+    note: '2 木頭可加工出 1 杉木｜NPC 收購價 $200',
   },
   {
     name: '杉木',
@@ -226,7 +226,7 @@ const itemsData = [
   },
   {
     name: '南瓜汁',
-    icon: '🥤',
+    icon: '🧃',
     category: '農產',
     effect: '',
     source: ['2 南瓜加工獲得'],
@@ -255,7 +255,7 @@ const itemsData = [
     icon: '🟤',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得', '獵殺豬取得'],
+    source: ['獵殺野豬取得', '獵殺豬取得', '獵殺牛取得'],
     note: '',
   },
   {

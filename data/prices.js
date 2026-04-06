@@ -10,6 +10,9 @@ const priceItems = [
   { name: '黃金',       icon: '🟡', category: '礦石',   sellPrice: 200  },
   { name: '鑽石',       icon: '💎', category: '礦石',   sellPrice: 1500 },
 
+  // 木材
+  { name: '木頭',       icon: '🪵', category: '木材',   sellPrice: 200 },
+
   // 漁獲
   { name: '魚',         icon: '🐟', category: '漁獲',   sellPrice: 10  },
   { name: '金魚',       icon: '🐠', category: '漁獲',   sellPrice: 50  },
@@ -30,5 +33,5 @@ const priceItems = [
   { name: '鳳梨',       icon: '🍍', category: '農產',   sellPrice: 470 },
   { name: '鳳梨汁',     icon: '🍹', category: '農產',   sellPrice: 620 },
   { name: '南瓜',       icon: '🎃', category: '農產',   sellPrice: 500 },
-  { name: '南瓜汁',     icon: '🥤', category: '農產',   sellPrice: 700 },
+  { name: '南瓜汁',     icon: '🧃', category: '農產',   sellPrice: 700 },
 ];
