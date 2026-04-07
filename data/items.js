@@ -30,7 +30,7 @@ const itemsData = [
     category: '原料',
     effect: '',
     source: ['精煉油加工獲得'],
-    note: '1 精煉油 → 1 食用油',
+    note: '1 精煉油 → 1 食用油｜NPC 收購價 $350',
   },
   {
     name: '火藥',
@@ -70,7 +70,7 @@ const itemsData = [
     category: '原料',
     effect: '',
     source: ['2 布料加工獲得'],
-    note: '',
+    note: 'NPC 收購價 $350',
   },
 
   // ── 木材 ────────────────────────────────────────────────
@@ -98,7 +98,7 @@ const itemsData = [
     category: '礦石',
     effect: '',
     source: ['採礦取得'],
-    note: '2 石頭可加工出 1 洗過的石頭',
+    note: '2 石頭可加工出 1 洗過的石頭｜NPC 收購價 $500',
   },
   {
     name: '洗過的石頭',
@@ -234,6 +234,14 @@ const itemsData = [
   },
 
   // ── 狩獵掉落 ─────────────────────────────────────────────
+  {
+    name: '野性之心',
+    icon: '❤️',
+    category: '狩獵掉落',
+    effect: '',
+    source: ['獵殺野豬取得'],
+    note: 'NPC 收購價 $1,500｜合成氧氣瓶所需材料',
+  },
   {
     name: '動物脂肪',
     icon: '🫧',

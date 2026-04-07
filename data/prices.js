@@ -24,11 +24,12 @@ const priceItems = [
   { name: '鯊魚',       icon: '🦈', category: '漁獲',   sellPrice: 200 },
 
   // 狩獵掉落
-  { name: '生雞肉',     icon: '🍗', category: '狩獵掉落', sellPrice: 30  },
-  { name: '生鹿肉',     icon: '🥩', category: '狩獵掉落', sellPrice: 80  },
-  { name: '動物脂肪',   icon: '🫧', category: '狩獵掉落', sellPrice: 50  },
-  { name: '動物骨頭',   icon: '🦴', category: '狩獵掉落', sellPrice: 30  },
-  { name: '普通皮革',   icon: '🟤', category: '狩獵掉落', sellPrice: 150 },
+  { name: '生雞肉',     icon: '🍗', category: '狩獵掉落', sellPrice: 30   },
+  { name: '生鹿肉',     icon: '🥩', category: '狩獵掉落', sellPrice: 80   },
+  { name: '動物脂肪',   icon: '🫧', category: '狩獵掉落', sellPrice: 50   },
+  { name: '動物骨頭',   icon: '🦴', category: '狩獵掉落', sellPrice: 30   },
+  { name: '普通皮革',   icon: '🟤', category: '狩獵掉落', sellPrice: 150  },
+  { name: '野性之心',   icon: '❤️', category: '狩獵掉落', sellPrice: 1500 },
 
   // 農產
   { name: '橘子',       icon: '🍊', category: '農產',   sellPrice: 300 },
