@@ -5,6 +5,7 @@
 // ============================================================
 const priceItems = [
   // 礦石
+  { name: '石頭',       icon: '🪨', category: '礦石',   sellPrice: 500  },
   { name: '鐵',         icon: '⬜', category: '礦石',   sellPrice: 150  },
   { name: '銅',         icon: '🟠', category: '礦石',   sellPrice: 180  },
   { name: '黃金',       icon: '🟡', category: '礦石',   sellPrice: 200  },
@@ -12,6 +13,9 @@ const priceItems = [
 
   // 木材
   { name: '木頭',       icon: '🪵', category: '木材',   sellPrice: 200 },
+
+  // 原料
+  { name: '食用油',     icon: '🫙', category: '原料',   sellPrice: 350 },
 
   // 漁獲
   { name: '魚',         icon: '🐟', category: '漁獲',   sellPrice: 10  },
