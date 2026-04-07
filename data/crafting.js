@@ -18,7 +18,13 @@ const craftingItems = [
   // 一般合成台 - 道具
   { name: '氧氣瓶', icon: '🧴', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '道具',
     desc: '',
-    materials: [{ qty: 36, icon: '🛢️', name: '精煉油' }, { qty: 24, icon: '🐟', name: '魚' }, { qty: 40, icon: '🪨', name: '鐵' }, { qty: 1, icon: '📋', name: '製作圖' }, { qty: 5, icon: '🐢', name: '海龜' }] },
+    materials: [
+      { qty: 24, icon: '🐟', name: '魚' },
+      { qty: 36, icon: '🧪', name: '精煉油' },
+      { qty: 5,  icon: '🦈', name: '鯊魚' },
+      { qty: 1,  icon: '❤️', name: '野性之心' },
+      { qty: 40, icon: '⬜', name: '鐵' },
+    ] },
 
   // 一般合成台 - 食物
   { name: '麵包', icon: '🥖', time: '00:10', level: 0, qty: 1, station: '一般合成台', stationType: 'general', category: '食物',
