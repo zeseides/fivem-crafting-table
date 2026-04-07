@@ -16,6 +16,7 @@ const priceItems = [
 
   // 原料
   { name: '食用油',     icon: '🫙', category: '原料',   sellPrice: 350 },
+  { name: '衣服',       icon: '👕', category: '原料',   sellPrice: 350 },
 
   // 漁獲
   { name: '魚',         icon: '🐟', category: '漁獲',   sellPrice: 10  },
