@@ -13,6 +13,7 @@ const priceItems = [
 
   // 木材
   { name: '木頭',       icon: '🪵', category: '木材',   sellPrice: 200 },
+  { name: '杉木',       icon: '🌲', category: '木材',   sellPrice: 500 },
 
   // 原料
   { name: '食用油',     icon: '🫙', category: '原料',   sellPrice: 350 },

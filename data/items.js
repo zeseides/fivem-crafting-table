@@ -88,7 +88,7 @@ const itemsData = [
     category: '木材',
     effect: '',
     source: ['2 木頭加工獲得'],
-    note: '',
+    note: 'NPC 收購價 $500',
   },
 
   // ── 礦石 ────────────────────────────────────────────────
@@ -239,7 +239,7 @@ const itemsData = [
     icon: '❤️',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得（5% 稀有掉落，每次 1 個）'],
+    source: ['獵殺野豬取得'],
     note: 'NPC 收購價 $1,500｜合成氧氣瓶所需材料',
   },
   {
@@ -247,12 +247,7 @@ const itemsData = [
     icon: '🫧',
     category: '狩獵掉落',
     effect: '',
-    source: [
-      '獵殺豬取得（80% 機率，1~2 個）',
-      '獵殺鹿取得（70% 機率，1 個）',
-      '獵殺野豬取得（70% 機率，1 個）',
-      '獵殺雞取得（70% 機率，1~3 個）',
-    ],
+    source: ['獵殺豬取得', '獵殺鹿取得', '獵殺雞取得'],
     note: '',
   },
   {
@@ -260,11 +255,7 @@ const itemsData = [
     icon: '🦴',
     category: '狩獵掉落',
     effect: '',
-    source: [
-      '獵殺鹿取得（30% 機率，1~2 個）',
-      '獵殺牛取得（60% 機率，1~3 個）',
-      '獵殺雞取得（20% 機率，1 個）',
-    ],
+    source: ['獵殺鹿取得', '獵殺牛取得'],
     note: '',
   },
   {
@@ -272,11 +263,7 @@ const itemsData = [
     icon: '🟤',
     category: '狩獵掉落',
     effect: '',
-    source: [
-      '獵殺牛取得（90% 機率，2~3 個）',
-      '獵殺野豬取得（60% 機率，1 個）',
-      '獵殺豬取得（50% 機率，1 個）',
-    ],
+    source: ['獵殺野豬取得', '獵殺豬取得', '獵殺牛取得'],
     note: '',
   },
   {
@@ -284,7 +271,7 @@ const itemsData = [
     icon: '🦌',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺鹿取得（40% 機率，1 個）'],
+    source: ['獵殺鹿取得'],
     note: '',
   },
   {
@@ -292,7 +279,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得（100% 掉落，1~2 個）'],
+    source: ['獵殺野豬取得'],
     note: '',
   },
   {
@@ -300,7 +287,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺豬取得（100% 掉落，1~3 個）'],
+    source: ['獵殺豬取得'],
     note: '',
   },
   {
@@ -308,7 +295,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺鹿取得（100% 掉落，1~2 個）'],
+    source: ['獵殺鹿取得'],
     note: '',
   },
   {
@@ -316,7 +303,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺牛取得（100% 掉落，2~4 個）'],
+    source: ['獵殺牛取得'],
     note: '',
   },
   {
@@ -324,7 +311,7 @@ const itemsData = [
     icon: '🍗',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺雞取得（100% 掉落，1~2 個）'],
+    source: ['獵殺雞取得'],
     note: '',
   },
 
