@@ -239,7 +239,7 @@ const itemsData = [
     icon: '❤️',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得'],
+    source: ['獵殺野豬 5% 機率掉落 ×1（稀有）'],
     note: 'NPC 收購價 $1,500｜合成氧氣瓶所需材料',
   },
   {
@@ -247,7 +247,12 @@ const itemsData = [
     icon: '🫧',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺豬取得', '獵殺鹿取得', '獵殺雞取得'],
+    source: [
+      '獵殺豬 80% 機率掉落 ×1~2',
+      '獵殺鹿 70% 機率掉落 ×1',
+      '獵殺野豬 70% 機率掉落 ×1',
+      '獵殺雞 70% 機率掉落 ×1~3',
+    ],
     note: '',
   },
   {
@@ -255,7 +260,11 @@ const itemsData = [
     icon: '🦴',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺鹿取得', '獵殺牛取得'],
+    source: [
+      '獵殺鹿 30% 機率掉落 ×1~2',
+      '獵殺牛 60% 機率掉落 ×1~3',
+      '獵殺雞 20% 機率掉落 ×1',
+    ],
     note: '',
   },
   {
@@ -263,7 +272,11 @@ const itemsData = [
     icon: '🟤',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得', '獵殺豬取得', '獵殺牛取得'],
+    source: [
+      '獵殺牛 90% 機率掉落 ×2~3',
+      '獵殺豬 50% 機率掉落 ×1',
+      '獵殺野豬 60% 機率掉落 ×1',
+    ],
     note: '',
   },
   {
@@ -271,7 +284,7 @@ const itemsData = [
     icon: '🦌',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺鹿取得'],
+    source: ['獵殺鹿 40% 機率掉落 ×1'],
     note: '',
   },
   {
@@ -279,7 +292,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺野豬取得'],
+    source: ['獵殺野豬 100% 掉落 ×1~2'],
     note: '',
   },
   {
@@ -287,7 +300,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺豬取得'],
+    source: ['獵殺豬 100% 掉落 ×1~3'],
     note: '',
   },
   {
@@ -295,7 +308,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺鹿取得'],
+    source: ['獵殺鹿 100% 掉落 ×1~2'],
     note: '',
   },
   {
@@ -303,7 +316,7 @@ const itemsData = [
     icon: '🥩',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺牛取得'],
+    source: ['獵殺牛 100% 掉落 ×2~4'],
     note: '',
   },
   {
@@ -311,7 +324,7 @@ const itemsData = [
     icon: '🍗',
     category: '狩獵掉落',
     effect: '',
-    source: ['獵殺雞取得'],
+    source: ['獵殺雞 100% 掉落 ×1~2'],
     note: '',
   },
 
