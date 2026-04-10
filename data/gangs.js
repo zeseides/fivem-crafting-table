@@ -14,7 +14,7 @@ const gangData = [
     bgColor: '#1a0f00',
     rules: [
       '稻川會據點周圍 300 公尺內 為本組織活動範圍，進入此範圍請謹慎行動，違者後果自負。',
-      '禁止行為：開槍、挑釁行為、拉轉引擎、鳴笛、聚眾逗留/徘徊。違規者將 直接擊斃 處理。',
+      '禁止行為：開槍、挑釁行為、拉轉引擎、鳳笛、聚眾逗留/徘徊。違規者將 直接擊斃 處理。',
       '發生糾紛 → 請至【投訴區】並附上 OBS / 截圖證據',
       '未經允許 → 禁止進入據點',
       '車輛規定 → 禁止偷竊組織成員任何車輛，違者：黑單 / 擊斃',
@@ -84,7 +84,7 @@ const gangData = [
         title: '撬鎖工具',
         icon: '🔑',
         items: [
-          { name: '撬鎖工具', price: 30000, unit: '把', currency: 'white' },
+          { name: '撬鎖工具', price: 100000, unit: '把', currency: 'white' },
         ],
       },
       {
@@ -94,18 +94,33 @@ const gangData = [
         tiers: [
           {
             label: '高級',
-            price: 8000,
-            items: ['鑽石', '電視機'],
+            price: 22400,
+            items: ['鑽石戟指', '電視機'],
+          },
+          {
+            label: '中高級',
+            price: 16800,
+            items: ['勞力士'],
           },
           {
             label: '中級',
-            price: 5000,
-            items: ['金項鏈', '蘋果手機', '勞力士'],
+            price: 9500,
+            items: ['金項鏈'],
+          },
+          {
+            label: '中低級',
+            price: 7000,
+            items: ['蘋果手機'],
+          },
+          {
+            label: '低級高',
+            price: 4200,
+            items: ['台客低音砲'],
           },
           {
             label: '低級',
-            price: 2000,
-            items: ['相機', '台客低音砲'],
+            price: 3600,
+            items: ['相機'],
           },
         ],
       },
@@ -114,10 +129,10 @@ const gangData = [
         icon: '💊',
         note: '以上均為黑錢單位，本幫有權更動價格。',
         drugs: [
-          { name: '可卡因', icon: '❄️', low: 700, mid: 1100, high: 1300 },
-          { name: '冰毒',   icon: '💠', low: 500, mid: 900,  high: 1100 },
-          { name: '古柯',   icon: '🌿', low: 400, mid: 800,  high: 1000 },
-          { name: '大麻',   icon: '🍃', low: 300, mid: 700,  high: 900  },
+          { name: '可卡因', icon: '❄️', low: 4000,  mid: 8000,  high: 12000 },
+          { name: '冰毒',   icon: '💠', low: 2480,  mid: 4800,  high: 6400  },
+          { name: '鼦片',   icon: '🌿', low: 1620,  mid: 3000,  high: 4380  },
+          { name: '大麻',   icon: '🍃', low: 1000,  mid: 2000,  high: 3000  },
         ],
       },
       {
@@ -125,7 +140,7 @@ const gangData = [
         icon: '💸',
         items: [
           { name: '洗錢匯率', value: '1 : 0.7', note: '黑錢兌白錢' },
-          { name: '單次最低', value: '50,000 黑錢', note: '未達門檻不受理' },
+          { name: '單次最低', value: '100,000 黑錢', note: '未達門檻不受理' },
         ],
       },
     ],

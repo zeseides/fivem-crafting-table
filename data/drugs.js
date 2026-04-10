@@ -8,42 +8,42 @@ const drugData = [
     name: '可卡因',
     icon: '❄️',
     tiers: [
-      { label: '1−2等 （低等級）', price: 700 },
-      { label: '3−4等 （中等級）', price: 1100 },
-      { label: '5−6等 （高等級）', price: 1300 },
+      { label: '1−2等 （低等級）', price: 4000  },
+      { label: '3−4等 （中等級）', price: 8000  },
+      { label: '5−6等 （高等級）', price: 12000 },
     ],
   },
   {
     name: '冰毒',
     icon: '💠',
     tiers: [
-      { label: '1−2等 （低等級）', price: 500 },
-      { label: '3−4等 （中等級）', price: 900 },
-      { label: '5−6等 （高等級）', price: 1100 },
+      { label: '1−2等 （低等級）', price: 2480 },
+      { label: '3−4等 （中等級）', price: 4800 },
+      { label: '5−6等 （高等級）', price: 6400 },
     ],
   },
   {
-    name: '古柯',
+    name: '鼦片',
     icon: '🌿',
     tiers: [
-      { label: '1−2等 （低等級）', price: 400 },
-      { label: '3−4等 （中等級）', price: 800 },
-      { label: '5−6等 （高等級）', price: 1000 },
+      { label: '1−2等 （低等級）', price: 1620 },
+      { label: '3−4等 （中等級）', price: 3000 },
+      { label: '5−6等 （高等級）', price: 4380 },
     ],
   },
   {
     name: '大麻',
     icon: '🍃',
     tiers: [
-      { label: '1−2等 （低等級）', price: 300 },
-      { label: '3−4等 （中等級）', price: 700 },
-      { label: '5−6等 （高等級）', price: 900 },
+      { label: '1−2等 （低等級）', price: 1000 },
+      { label: '3−4等 （中等級）', price: 2000 },
+      { label: '5−6等 （高等級）', price: 3000 },
     ],
   },
 ];
 
 // 洗黑錢規則
 const moneyLaunderingRules = {
-  rate: 0.7,        // 1 黑錢 : 0.7 白錢
-  minAmount: 50000, // 最少一次 50000 黑錢才能洗
+  rate: 0.7,         // 1 黑錢 : 0.7 白錢
+  minAmount: 100000, // 最少一次 10萬黑錢才能洗
 };
